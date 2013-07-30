@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Clipuller::VERSION
   spec.authors       = ["Andrew De Ponte"]
   spec.email         = ["cyphactor@gmail.com"]
-  spec.description   = %q{TODO: Write a gem description}
-  spec.summary       = %q{TODO: Write a gem summary}
+  spec.description   = %q{Command Line utility to make you aware of open pull-requests across systems at all times.}
+  spec.summary       = %q{CLI tool that shows open pull-requests across systems.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
