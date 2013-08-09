@@ -1,12 +1,14 @@
 require 'clipuller/window_system'
 require 'launchy'
 require 'curses'
+require 'thread'
 
 module Clipuller
   class CursesWindowSystem < Clipuller::WindowSystem
     def initialize
       @selected_pull_request_index = 0
       @current_pull_requests = []
+      @state_lock = Mutex.new
     end
 
     def setup
@@ -20,7 +22,9 @@ module Clipuller
     end
 
     def refresh_pull_requests(pull_requests)
-      @current_pull_requests = pull_requests.dup
+      @state_lock.synchronize {
+        @current_pull_requests = pull_requests.dup
+      }
       draw_current_pull_requests
     end
 
@@ -35,7 +39,9 @@ module Clipuller
           move_selection_up
           draw_current_pull_requests
         when 'o'
-          Launchy.open(@current_pull_requests[@selected_pull_request_index].link)
+          @state_lock.synchronize {
+            Launchy.open(@current_pull_requests[@selected_pull_request_index].link)
+          }
         end
         c = Curses.getch()
       end
@@ -73,28 +79,34 @@ module Clipuller
     end
 
     def move_selection_up
-      if @selected_pull_request_index > 0
-        @selected_pull_request_index -= 1
-      end
+      @state_lock.synchronize {
+        if @selected_pull_request_index > 0
+          @selected_pull_request_index -= 1
+        end
+      }
     end
 
     def move_selection_down
-      if @selected_pull_request_index < @current_pull_requests.length
-        @selected_pull_request_index += 1
-      end
+      @state_lock.synchronize {
+        if @selected_pull_request_index < @current_pull_requests.length
+          @selected_pull_request_index += 1
+        end
+      }
     end
 
     def draw_current_pull_requests
-      output_string(3, 0, "#{@current_pull_requests.length} Pull Requests")
-      output_string(5, 0, "repository      title                   from_reference          to_reference            author                  service")
-      output_string(6, 0, "--------------------------------------------------------------------------------------------------------------------------------")
-      @current_pull_requests.each_with_index do |pull_request, index|
-        if index == @selected_pull_request_index
-          output_highlighted_string(7 + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
-        else
-          output_string(7 + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
+      @state_lock.synchronize {
+        output_string(3, 0, "#{@current_pull_requests.length} Pull Requests")
+        output_string(5, 0, "repository      title                   from_reference          to_reference            author                  service")
+        output_string(6, 0, "--------------------------------------------------------------------------------------------------------------------------------")
+        @current_pull_requests.each_with_index do |pull_request, index|
+          if index == @selected_pull_request_index
+            output_highlighted_string(7 + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
+          else
+            output_string(7 + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
+          end
         end
-      end
+      }
     end
   end
 end
