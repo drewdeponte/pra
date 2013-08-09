@@ -23,4 +23,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 2.14.1"
 
   spec.add_dependency "rest-client", "~> 1.6.7"
+  spec.add_dependency "launchy", "~> 2.3.0"
 end

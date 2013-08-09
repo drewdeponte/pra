@@ -1,36 +1,30 @@
-require 'clipuller/pull_request_outputter'
-require 'clipuller/config'
-require 'clipuller/pull_source_factory'
+require 'thread'
+
+require 'clipuller/window_system_factory'
+require 'clipuller/pull_request_service'
+
+Thread.abort_on_exception=true
 
 module Clipuller
   class App
     def run
-      outputter = Clipuller::PullRequestOutputter.new
-      pull_requests.each do |pull_request|
-        outputter.add_pull_request(pull_request)
-      end
-      outputter.draw
+      @window_system = Clipuller::WindowSystemFactory.build('curses')
+      @window_system.setup
+
+      spawn_pull_request_fetcher
+
+      @window_system.run_loop
     end
 
-    def pull_requests
-      pull_requests = []
-      pull_sources.each do |pull_source|
-        pull_requests.concat(pull_source.pull_requests)
-      end
-      return pull_requests
+    def spawn_pull_request_fetcher
+      Thread.new { pull_request_fetcher_thread }
     end
 
-    def pull_sources
-      config = Clipuller::Config.load_config
-      return map_config_to_pull_sources(config)
-    end
-
-    def map_config_to_pull_sources(config)
-      sources = []
-      config.pull_sources.each do |pull_source_config|
-        sources << Clipuller::PullSourceFactory.build_pull_source(pull_source_config)
-      end
-      return sources
+    def pull_request_fetcher_thread
+      @window_system.fetching_pull_requests
+      pull_requests = Clipuller::PullRequestService.fetch_pull_requests
+      @window_system.refresh_pull_requests(pull_requests)
+      Kernel.sleep(5 * 60)
     end
   end
 end
