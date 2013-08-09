@@ -18,7 +18,7 @@ describe Clipuller::StashPullSource do
         ]
       }
       pull_source = Clipuller::StashPullSource.new(config)
-      pull_source.should_receive(:get_repo_pull_requests).with({ "project_slug" => "CAP", "repository_slug" => "capture_api" })
+      pull_source.should_receive(:get_repo_pull_requests).with({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).and_return([])
       pull_source.pull_requests
     end
 
@@ -72,7 +72,7 @@ describe Clipuller::StashPullSource do
       pull_source = Clipuller::StashPullSource.new(config)
       the_url = double
       pull_source.stub(:stash_rest_api_pull_request_url).with({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).and_return(the_url)
-      RestClient.should_receive(:get).with(the_url, anything)
+      RestClient.should_receive(:get).with(the_url, anything).and_return('{ "values": [] }')
       pull_source.get_repo_pull_requests({ "project_slug" => "CAP", "repository_slug" => "capture_api" })
     end
   end
