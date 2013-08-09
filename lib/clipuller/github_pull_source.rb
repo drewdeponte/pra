@@ -19,14 +19,18 @@ module Clipuller
 
     def get_repo_pull_requests(repository_config)
       requests = []
-      JSON.parse(RestClient.get stash_rest_api_pull_request_url(repository_config), :content_type => :json, :accept => :json).each do |request|
+      JSON.parse(rest_api_pull_request_resource(repository_config).get).each do |request|
         requests << Clipuller::PullRequest.new(title: request["title"], from_reference: request["head"]["label"], to_reference: request["base"]["label"], author: request["user"]["login"], link: request['html_url'], service_id: 'github', repository: repository_config["repository"])
       end
       return requests
     end
 
-    def stash_rest_api_pull_request_url(repository_config)
-      "#{@config['protocol']}://#{@config['username']}:#{@config['password']}@#{@config['host']}/repos/#{repository_config["owner"]}/#{repository_config["repository"]}/pulls"
+    def rest_api_pull_request_url(repository_config)
+      "#{@config['protocol']}://#{@config['host']}/repos/#{repository_config["owner"]}/#{repository_config["repository"]}/pulls"
+    end
+
+    def rest_api_pull_request_resource(repository_config)
+      RestClient::Resource.new(rest_api_pull_request_url(repository_config), user: @config['username'], password: @config['password'], content_type: :json, accept: :json)
     end
   end
 end
