@@ -86,13 +86,13 @@ module Clipuller
 
     def draw_current_pull_requests
       output_string(3, 0, "#{@current_pull_requests.length} Pull Requests")
-      output_string(5, 0, "   title                        from_reference          to_reference            author")
-      output_string(6, 0, "---------------------------------------------------------------------------------------------------")
+      output_string(5, 0, "repository      title                   from_reference          to_reference            author                  service")
+      output_string(6, 0, "--------------------------------------------------------------------------------------------------------------------------------")
       @current_pull_requests.each_with_index do |pull_request, index|
         if index == @selected_pull_request_index
-          output_highlighted_string(7 + index, 0, "#{index}: #{pull_request.title.ljust(20)[0..20]}\t#{pull_request.from_reference.ljust(20)[0..20]}\t#{pull_request.to_reference.ljust(20)[0..20]}\t#{pull_request.author.ljust(20)[0..20]}\t#{pull_request.service_id}\t#{pull_request.repository}")
+          output_highlighted_string(7 + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
         else
-          output_string(7 + index, 0, "#{index}: #{pull_request.title.ljust(20)[0..20]}\t#{pull_request.from_reference.ljust(20)[0..20]}\t#{pull_request.to_reference.ljust(20)[0..20]}\t#{pull_request.author.ljust(20)[0..20]}\t#{pull_request.service_id}\t#{pull_request.repository}")
+          output_string(7 + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
         end
       end
     end

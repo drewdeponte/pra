@@ -3,6 +3,8 @@ require 'thread'
 require 'clipuller/window_system_factory'
 require 'clipuller/pull_request_service'
 
+Thread.abort_on_exception=true
+
 module Clipuller
   class App
     def run
@@ -22,7 +24,7 @@ module Clipuller
       @window_system.fetching_pull_requests
       pull_requests = Clipuller::PullRequestService.fetch_pull_requests
       @window_system.refresh_pull_requests(pull_requests)
-      Kernel.sleep(10)
+      Kernel.sleep(5 * 60)
     end
   end
 end
