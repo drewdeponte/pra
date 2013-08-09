@@ -19,6 +19,7 @@ module Clipuller
     end
 
     def pull_request_fetcher_thread
+      @window_system.fetching_pull_requests
       pull_requests = Clipuller::PullRequestService.fetch_pull_requests
       @window_system.refresh_pull_requests(pull_requests)
       Kernel.sleep(10)

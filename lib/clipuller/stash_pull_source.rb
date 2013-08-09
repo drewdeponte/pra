@@ -20,7 +20,7 @@ module Clipuller
     def get_repo_pull_requests(repository_config)
       requests = []
       JSON.parse(RestClient.get stash_rest_api_pull_request_url(repository_config), :content_type => :json, :accept => :json)["values"].each do |request|
-        requests << Clipuller::PullRequest.new(title: request["title"], from_reference: request["fromRef"]["id"], to_reference: request["toRef"]["id"], author: request["author"]["user"]["name"], link: request["link"]["url"])
+        requests << Clipuller::PullRequest.new(title: request["title"], from_reference: request["fromRef"]["id"], to_reference: request["toRef"]["id"], author: request["author"]["user"]["name"], link: "#{@config['protocol']}://#{@config['host']}#{request['link']['url']}")
       end
       return requests
     end
