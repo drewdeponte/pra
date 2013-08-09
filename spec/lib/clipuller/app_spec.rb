@@ -2,109 +2,62 @@ require_relative "../../../lib/clipuller/app"
 
 describe Clipuller::App do
   describe "#run" do
-    it "drives" do
+    it "builds the window system" do
+      subject.stub(:spawn_pull_request_fetcher)
+      window_system_double = double('window system', setup: nil, run_loop: nil)
+      expect(Clipuller::WindowSystemFactory).to receive(:build).with('curses').and_return(window_system_double)
       subject.run
     end
 
-    it "gets all open pull-requests" do
-      outputter = double('outputter', draw: nil)
-      Clipuller::PullRequestOutputter.stub(:new).and_return(outputter)
-      subject.should_receive(:pull_requests).and_return([])
+    it "sets up the window system" do
+      subject.stub(:spawn_pull_request_fetcher)
+      window_system_double = double('window system', run_loop: nil)
+      Clipuller::WindowSystemFactory.stub(:build).and_return(window_system_double)
+      expect(window_system_double).to receive(:setup)
       subject.run
     end
 
-    it "notifies the pull request outputter of each of the pull requests" do
-      outputter = double('outputter', draw: nil)
-      Clipuller::PullRequestOutputter.stub(:new).and_return(outputter)
-      pull_request_one = double('pull request one')
-      pull_request_two = double('pull request two')
-      subject.stub(:pull_requests).and_return([pull_request_one, pull_request_two])
-      outputter.should_receive(:add_pull_request).with(pull_request_one)
-      outputter.should_receive(:add_pull_request).with(pull_request_two)
+    it "spawns the pull request fetcher thread" do
+      window_system_double = double('window system', setup: nil, run_loop: nil)
+      Clipuller::WindowSystemFactory.stub(:build).and_return(window_system_double)
+      expect(subject).to receive(:spawn_pull_request_fetcher)
       subject.run
     end
 
-    it "draws the screen with all the pull requests" do
-      subject.stub(:pull_requests).and_return([])
-      outputter = double('outputter')
-      Clipuller::PullRequestOutputter.stub(:new).and_return(outputter)
-      outputter.should_receive(:draw)
+    it "starts the window system run loop" do
+      subject.stub(:spawn_pull_request_fetcher)
+      window_system_double = double('window system', setup: nil, refresh_pull_requests: nil)
+      Clipuller::WindowSystemFactory.stub(:build).and_return(window_system_double)
+      expect(window_system_double).to receive(:run_loop)
       subject.run
     end
   end
 
-  describe "#pull_requests" do
-    it "gets all the pull-request sources" do
-      subject.should_receive(:pull_sources).and_return([])
-      subject.pull_requests
+  describe "#pull_request_fetcher_thread" do
+    it "fetches the pull requests from all of the sources" do
+      Kernel.stub(:sleep)
+      window_system_double = double('window system', refresh_pull_requests: nil)
+      subject.instance_variable_set(:@window_system, window_system_double)
+      expect(Clipuller::PullRequestService).to receive(:fetch_pull_requests)
+      subject.pull_request_fetcher_thread
     end
 
-    it "gets the pull requests from each pull-request source" do
-      pull_source_one = double('pull source one')
-      pull_source_two = double('pull source two')
-      subject.stub(:pull_sources).and_return([pull_source_one, pull_source_two])
-      pull_source_one.should_receive(:pull_requests).and_return([])
-      pull_source_two.should_receive(:pull_requests).and_return([])
-      subject.pull_requests
+    it "tells the window system to refresh pull requests" do
+      Kernel.stub(:sleep)
+      pull_requests = double('fetched pull requests')
+      Clipuller::PullRequestService.stub(:fetch_pull_requests).and_return(pull_requests)
+      window_system_double = double('window system')
+      subject.instance_variable_set(:@window_system, window_system_double)
+      expect(window_system_double).to receive(:refresh_pull_requests).with(pull_requests)
+      subject.pull_request_fetcher_thread
     end
 
-    it "returns an array of all the pull-requests from each of the sources" do
-      pull_request_one = double('pull request one')
-      pull_request_two = double('pull request two')
-      pull_source_one = double('pull source one', :pull_requests => [pull_request_one])
-      pull_source_two = double('pull source two', :pull_requests => [pull_request_two])
-      subject.stub(:pull_sources).and_return([pull_source_one, pull_source_two])
-      subject.pull_requests.should eq([pull_request_one, pull_request_two])
-    end
-  end
-
-  describe "#pull_sources" do
-    it "gets the users config" do
-      subject.stub(:map_config_to_pull_sources)
-      Clipuller::Config.should_receive(:load_config)
-      subject.pull_sources
-    end
-
-    it "maps the pull-request sources from the config to PullSource objects" do
-      config = double('users config')
-      Clipuller::Config.stub(:load_config).and_return(config)
-      subject.should_receive(:map_config_to_pull_sources).with(config)
-      subject.pull_sources
-    end
-
-    it "returns the mapped pull-request sources" do
-      Clipuller::Config.stub(:load_config)
-      sources = double('pull sources')
-      subject.stub(:map_config_to_pull_sources).and_return(sources)
-      subject.pull_sources.should eq(sources)
-    end
-  end
-
-  describe "#map_config_to_pull_sources" do
-    it "gets the pull sources from the config" do
-      config = double('config')
-      config.should_receive(:pull_sources).and_return([])
-      subject.map_config_to_pull_sources(config)
-    end
-
-    it "creates a PullSource based object for each configured pull source" do
-      pull_source_config_one = double('pull source config one')
-      pull_source_config_two = double('pull source config two')
-      config = double('config', pull_sources: [pull_source_config_one, pull_source_config_two])
-      Clipuller::PullSourceFactory.should_receive(:build_pull_source).with(pull_source_config_one)
-      Clipuller::PullSourceFactory.should_receive(:build_pull_source).with(pull_source_config_two)
-      subject.map_config_to_pull_sources(config)
-    end
-
-    it "returns an array of the constructed PullSource based objects" do
-      pull_source_one = double('pull source one')
-      pull_source_two = double('pull source two')
-      pull_source_config_one = double('pull source config one')
-      pull_source_config_two = double('pull source config two')
-      config = double('config', pull_sources: [pull_source_config_one, pull_source_config_two])
-      Clipuller::PullSourceFactory.stub(:build_pull_source).with(pull_source_config_one).and_return(pull_source_one)
-      Clipuller::PullSourceFactory.stub(:build_pull_source).with(pull_source_config_two).and_return(pull_source_two)
-      subject.map_config_to_pull_sources(config).should eq([pull_source_one, pull_source_two])
+    it "sleeps for the polling frequency" do
+      window_system_double = double('window system', refresh_pull_requests: nil)
+      subject.instance_variable_set(:@window_system, window_system_double)
+      Clipuller::PullRequestService.stub(:fetch_pull_requests)
+      expect(Kernel).to receive(:sleep)
+      subject.pull_request_fetcher_thread
     end
   end
 end
