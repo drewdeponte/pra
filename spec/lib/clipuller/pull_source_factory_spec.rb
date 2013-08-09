@@ -30,5 +30,11 @@ describe Clipuller::PullSourceFactory do
         subject.map_type_to_klass("stash").should eq(Clipuller::StashPullSource)
       end
     end
+
+    context "When given type is 'github'" do
+      it "returns the GithubPullSource class" do
+        subject.map_type_to_klass("github").should eq(Clipuller::GithubPullSource)
+      end
+    end
   end
 end

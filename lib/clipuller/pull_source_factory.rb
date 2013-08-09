@@ -1,4 +1,5 @@
 require 'clipuller/stash_pull_source'
+require 'clipuller/github_pull_source'
 
 module Clipuller
   module PullSourceFactory
@@ -11,6 +12,8 @@ module Clipuller
       case type
       when 'stash'
         return StashPullSource
+      when 'github'
+        return GithubPullSource
       end
     end
   end
