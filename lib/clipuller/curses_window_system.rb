@@ -8,6 +8,7 @@ module Clipuller
     def initialize
       @selected_pull_request_index = 0
       @current_pull_requests = []
+      @previous_number_of_pull_requests = 0
       @state_lock = Mutex.new
     end
 
@@ -22,6 +23,8 @@ module Clipuller
     end
 
     def refresh_pull_requests(pull_requests)
+      @previous_number_of_pull_requests = @current_pull_requests.length
+
       @state_lock.synchronize {
         @current_pull_requests = pull_requests.dup
       }
@@ -99,6 +102,13 @@ module Clipuller
         output_string(3, 0, "#{@current_pull_requests.length} Pull Requests")
         output_string(5, 0, "repository      title                   from_reference          to_reference            author                  service")
         output_string(6, 0, "--------------------------------------------------------------------------------------------------------------------------------")
+        
+        (7...7+@previous_number_of_pull_requests).each do |i|
+          Curses.setpos(i,0)
+          Curses.clrtoeol
+          Curses.refresh
+        end
+
         @current_pull_requests.each_with_index do |pull_request, index|
           if index == @selected_pull_request_index
             output_highlighted_string(7 + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
