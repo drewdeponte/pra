@@ -91,7 +91,7 @@ module Clipuller
 
     def move_selection_down
       @state_lock.synchronize {
-        if @selected_pull_request_index < @current_pull_requests.length
+        if @selected_pull_request_index < @current_pull_requests.length-1
           @selected_pull_request_index += 1
         end
       }
