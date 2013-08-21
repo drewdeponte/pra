@@ -5,6 +5,8 @@ require 'thread'
 
 module Clipuller
   class CursesWindowSystem < Clipuller::WindowSystem
+    ENTER_KEY = 10
+
     def initialize
       @selected_pull_request_index = 0
       @current_pull_requests = []
@@ -33,15 +35,15 @@ module Clipuller
 
     def run_loop
       c = Curses.getch()
-      while c != 'q' do
+      while (c != 'q') do
         case c
-        when 'j'
+        when 'j', Curses::Key::DOWN
           move_selection_down
           draw_current_pull_requests
-        when 'k'
+        when 'k', Curses::Key::UP
           move_selection_up
           draw_current_pull_requests
-        when 'o'
+        when 'o', ENTER_KEY
           @state_lock.synchronize {
             Launchy.open(@current_pull_requests[@selected_pull_request_index].link)
           }
@@ -57,10 +59,10 @@ module Clipuller
     def initialize_screen_settings
       Curses.noecho # do not show typed keys
       Curses.init_screen
+      Curses.stdscr.keypad(true)
       Curses.start_color
       Curses.curs_set(0)
       Curses.init_pair(1, Curses::COLOR_CYAN, Curses::COLOR_BLACK)
-      Curses.nl
     end
     
     def output_string(row, col, str)
@@ -78,7 +80,7 @@ module Clipuller
 
     def display_instructions
       output_string(0, 0, "Clipuller: Helping you own pull requests")
-      output_string(1, 0, "quit: q, up: k, down: j, open: o")
+      output_string(1, 0, "quit: q, up: k|#{"\u25B2".encode("UTF-8")}, down: j|#{"\u25BC".encode("UTF-8")}, open: o|#{"\u21A9".encode("UTF-8")}")
     end
 
     def move_selection_up
