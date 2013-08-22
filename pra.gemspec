@@ -1,11 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'clipuller/version'
+require 'pra/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "clipuller"
-  spec.version       = Clipuller::VERSION
+  spec.name          = "pra"
+  spec.version       = Pra::VERSION
   spec.authors       = ["Andrew De Ponte"]
   spec.email         = ["cyphactor@gmail.com"]
   spec.description   = %q{Command Line utility to make you aware of open pull-requests across systems at all times.}

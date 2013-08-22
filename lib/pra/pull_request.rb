@@ -1,4 +1,4 @@
-module Clipuller
+module Pra
   class PullRequest
     attr_accessor :title, :from_reference, :to_reference, :author, :link, :service_id, :repository
 

@@ -1,4 +1,4 @@
-module Clipuller
+module Pra
   class PullRequestOutputter
     def initialize
       @pull_requests = []

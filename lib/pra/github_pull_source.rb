@@ -1,10 +1,10 @@
-require 'clipuller/pull_source'
-require 'clipuller/pull_request'
+require 'pra/pull_source'
+require 'pra/pull_request'
 require 'rest_client'
 require 'json'
 
-module Clipuller
-  class GithubPullSource < Clipuller::PullSource
+module Pra
+  class GithubPullSource < Pra::PullSource
     def pull_requests
       requests = []
       repositories.each do |repo_config|
@@ -20,7 +20,7 @@ module Clipuller
     def get_repo_pull_requests(repository_config)
       requests = []
       JSON.parse(rest_api_pull_request_resource(repository_config).get).each do |request|
-        requests << Clipuller::PullRequest.new(title: request["title"], from_reference: request["head"]["label"], to_reference: request["base"]["label"], author: request["user"]["login"], link: request['html_url'], service_id: 'github', repository: repository_config["repository"])
+        requests << Pra::PullRequest.new(title: request["title"], from_reference: request["head"]["label"], to_reference: request["base"]["label"], author: request["user"]["login"], link: request['html_url'], service_id: 'github', repository: repository_config["repository"])
       end
       return requests
     end
