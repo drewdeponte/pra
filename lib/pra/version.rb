@@ -1,3 +1,3 @@
-module Clipuller
+module Pra
   VERSION = "0.0.1"
 end

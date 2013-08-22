@@ -1,16 +1,16 @@
-require_relative "../../../lib/clipuller/config"
+require_relative "../../../lib/pra/config"
 
-describe Clipuller::Config do
+describe Pra::Config do
   describe "#initialize" do
     it "assigns the provide default config hash" do
       config_hash = { some: "hash" }
-      config = Clipuller::Config.new(config_hash)
+      config = Pra::Config.new(config_hash)
       config.instance_variable_get(:@initial_config).should eq(config_hash)
     end
   end
 
   describe ".load_config" do
-    subject { Clipuller::Config }
+    subject { Pra::Config }
 
     it "parses the config file" do
       subject.should_receive(:parse_config_file)
@@ -33,7 +33,7 @@ describe Clipuller::Config do
   end
 
   describe ".parse_config_file" do
-    subject { Clipuller::Config }
+    subject { Pra::Config }
 
     it "reads the users config" do
       subject.stub(:json_parse)
@@ -50,7 +50,7 @@ describe Clipuller::Config do
   end
 
   describe ".read_config_file" do
-    subject { Clipuller::Config }
+    subject { Pra::Config }
 
     it "opens the file" do
       config_path = double('config path')
@@ -85,16 +85,16 @@ describe Clipuller::Config do
   end
 
   describe ".config_path" do
-    subject { Clipuller::Config }
+    subject { Pra::Config }
 
-    it "returns the joined users home directory and .clipuller.json to create the path" do
+    it "returns the joined users home directory and .pra.json to create the path" do
       subject.stub(:users_home_directory).and_return('/home/someuser')
-      subject.config_path.should eq('/home/someuser/.clipuller.json')
+      subject.config_path.should eq('/home/someuser/.pra.json')
     end
   end
 
   describe ".users_home_directory" do
-    subject { Clipuller::Config }
+    subject { Pra::Config }
 
     it "returns the current users home directory" do
       ENV['HOME'] = '/home/someuser'
@@ -103,7 +103,7 @@ describe Clipuller::Config do
   end
 
   describe ".json_parse" do
-    subject { Clipuller::Config }
+    subject { Pra::Config }
 
     it "parses the given content as json" do
       content = double('some json content')

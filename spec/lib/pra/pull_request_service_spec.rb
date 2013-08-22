@@ -1,6 +1,6 @@
-require_relative '../../../lib/clipuller/pull_request_service'
+require_relative '../../../lib/pra/pull_request_service'
 
-describe Clipuller::PullRequestService do
+describe Pra::PullRequestService do
   describe ".fetch_pull_requests" do
     it "gets all the pull-request sources" do
       subject.should_receive(:pull_sources).and_return([])
@@ -29,19 +29,19 @@ describe Clipuller::PullRequestService do
   describe "#pull_sources" do
     it "gets the users config" do
       subject.stub(:map_config_to_pull_sources)
-      Clipuller::Config.should_receive(:load_config)
+      Pra::Config.should_receive(:load_config)
       subject.pull_sources
     end
 
     it "maps the pull-request sources from the config to PullSource objects" do
       config = double('users config')
-      Clipuller::Config.stub(:load_config).and_return(config)
+      Pra::Config.stub(:load_config).and_return(config)
       subject.should_receive(:map_config_to_pull_sources).with(config)
       subject.pull_sources
     end
 
     it "returns the mapped pull-request sources" do
-      Clipuller::Config.stub(:load_config)
+      Pra::Config.stub(:load_config)
       sources = double('pull sources')
       subject.stub(:map_config_to_pull_sources).and_return(sources)
       subject.pull_sources.should eq(sources)
@@ -59,8 +59,8 @@ describe Clipuller::PullRequestService do
       pull_source_config_one = double('pull source config one')
       pull_source_config_two = double('pull source config two')
       config = double('config', pull_sources: [pull_source_config_one, pull_source_config_two])
-      Clipuller::PullSourceFactory.should_receive(:build_pull_source).with(pull_source_config_one)
-      Clipuller::PullSourceFactory.should_receive(:build_pull_source).with(pull_source_config_two)
+      Pra::PullSourceFactory.should_receive(:build_pull_source).with(pull_source_config_one)
+      Pra::PullSourceFactory.should_receive(:build_pull_source).with(pull_source_config_two)
       subject.map_config_to_pull_sources(config)
     end
 
@@ -70,8 +70,8 @@ describe Clipuller::PullRequestService do
       pull_source_config_one = double('pull source config one')
       pull_source_config_two = double('pull source config two')
       config = double('config', pull_sources: [pull_source_config_one, pull_source_config_two])
-      Clipuller::PullSourceFactory.stub(:build_pull_source).with(pull_source_config_one).and_return(pull_source_one)
-      Clipuller::PullSourceFactory.stub(:build_pull_source).with(pull_source_config_two).and_return(pull_source_two)
+      Pra::PullSourceFactory.stub(:build_pull_source).with(pull_source_config_one).and_return(pull_source_one)
+      Pra::PullSourceFactory.stub(:build_pull_source).with(pull_source_config_two).and_return(pull_source_two)
       subject.map_config_to_pull_sources(config).should eq([pull_source_one, pull_source_two])
     end
   end

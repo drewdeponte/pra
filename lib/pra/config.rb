@@ -1,6 +1,6 @@
 require 'json'
 
-module Clipuller
+module Pra
   class Config
     def initialize(initial_config = {})
       @initial_config = initial_config
@@ -22,7 +22,7 @@ module Clipuller
     end
 
     def self.config_path
-      return File.join(self.users_home_directory, '.clipuller.json')
+      return File.join(self.users_home_directory, '.pra.json')
     end
 
     def self.users_home_directory

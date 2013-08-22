@@ -1,4 +1,4 @@
-module Clipuller
+module Pra
   class WindowSystem
     class PureVirtualMethodNotImplemented < RuntimeError; end
 

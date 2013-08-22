@@ -1,10 +1,10 @@
-require 'clipuller/window_system'
+require 'pra/window_system'
 require 'launchy'
 require 'curses'
 require 'thread'
 
-module Clipuller
-  class CursesWindowSystem < Clipuller::WindowSystem
+module Pra
+  class CursesWindowSystem < Pra::WindowSystem
     ENTER_KEY = 10
 
     def initialize
@@ -79,7 +79,7 @@ module Clipuller
     end
 
     def display_instructions
-      output_string(0, 0, "Clipuller: Helping you own pull requests")
+      output_string(0, 0, "Pra: Helping you own pull requests")
       output_string(1, 0, "quit: q, up: k|#{"\u25B2".encode("UTF-8")}, down: j|#{"\u25BC".encode("UTF-8")}, open: o|#{"\u21A9".encode("UTF-8")}")
     end
 
