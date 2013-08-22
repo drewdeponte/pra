@@ -26,7 +26,4 @@ it in Stash for now.
   required. It would also be nice to notify the user of what command would
   help them generate one, or if they just need a place to look to find an
   example.
-- Document how to install, configure, and use the application in the README.
-  Also we need to refer to information on contributing to the project in the
-  README.
 - License the project under the MIT license.
