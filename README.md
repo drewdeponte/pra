@@ -1,4 +1,4 @@
-# Pull-Request Aggregator
+# pra - The Pull-Request Aggregator
 
 `pra` is a command line tool designed to allow developers to see the
 current state of open pull-requests across multiple services. Currently, it
@@ -94,14 +94,14 @@ following areas:
 
 As with all software I am sure `pra` will have some bugs. I would very much
 appreciate any contributions of bug reports. These can be reported on the
-[issues page](/issues) of the project.
+[issues page](http://github.com/reachlocal/pra/issues) of the project.
 
 ### Feature Requests
 
 The current state of `pra` is just the MVP (minimum viable product). This
 means there is always room for growth. If you would like to contribute your
 thoughts on features that you would like `pra` to have you can submit them on
-the issues page of the project.
+the [issues page](http://github.com/reachlocal/pra/issues) of the project.
 
 ### Improve Documentation
 
@@ -161,7 +161,7 @@ command:
 
 ##### Test Driven Development
 
-I have been developed `pra` using the TDD methodology with
+I eveloped `pra` using the TDD methodology with
 [RSpec](http://www.relishapp.com/rspec) as the testing tool of choice.
 Therefore, if you are going to contribute code to `pra` please TDD your code
 changes using [RSpec](http://www.relishapp.com/rspec). If you do not submit
