@@ -6,6 +6,10 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+#### v0.1.1
+
+* Fixed up the gemspec to include homepage on rubygems.org
+
 #### v0.1.0
 
 This is the first public release. It includes the following:
