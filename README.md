@@ -64,7 +64,7 @@ running the following command:
 
     pra
 
-Once it launches it will use the information provided in the `~/.pra.json`
+Once it launches, it will use the information provided in the `~/.pra.json`
 configuration file to fetch all the open pull requests and display them. Once,
 the pull requests are displayed you can perorm any of the following actions.
 
@@ -94,7 +94,7 @@ following areas:
 
 As with all software I am sure `pra` will have some bugs. I would very much
 appreciate any contributions of bug reports. These can be reported on the
-issues page of the project.
+[issues page](/issues) of the project.
 
 ### Feature Requests
 
