@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["cyphactor@gmail.com"]
   spec.description   = %q{Command Line utility to make you aware of open pull-requests across systems at all times.}
   spec.summary       = %q{CLI tool that shows open pull-requests across systems.}
-  spec.homepage      = ""
+  spec.homepage      = "http://github.com/reachlocal/pra"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
