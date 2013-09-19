@@ -57,6 +57,37 @@ file to get you started. Then simply replace the appropriate fields and the
 **repositories** sections for all the pull sources with the repository
 information for the repositories you want to watch for open pull requests.
 
+### GitHub Authentication
+
+#### Multi-Factor Authentication
+
+Sadly, at the moment `pra` doesn't support GitHub's Multi-Factor
+Authentication. There is a ticket for this
+( [\#5](https://github.com/reachlocal/pra/issues/5) ).
+
+#### OAuth
+
+It is also lacking support for GitHub's OAuth mechanism. There is a ticket for
+this ( [\#6](https://github.com/reachlocal/pra/issues/6) ).
+
+#### HTTP Basic Auth
+
+The HTTP Basic Auth will work as long as you don't have multi-factor
+authentication enabled for your account.
+
+#### Personal Access Token
+
+Personal Access Token authentication is currently supported and this is the
+recommended authentication mechanism to use right now. It is the only
+authentication mechanism you can use at the moment if you have multi-factor
+authentication enabled.
+
+Simply go to your GitHub **Account Settings**, select **Applications**, click
+the **Create new token** button in the **Personal Access Token** section. Give
+it the name "Pra" and submit. This will generate your personal access token.
+Then simply put your personal access token in the `~/.pra.json` as your GitHub
+username and "x-oauth-basic" as your GitHub password.
+
 ## Usage
 
 Once you have configured `pra` as described above you can launch it by simply
