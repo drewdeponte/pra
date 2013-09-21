@@ -1,5 +1,6 @@
 require 'pra/config'
 require 'pra/pull_source_factory'
+require 'pra/pull_request_service/fetch_status'
 
 module Pra
   module PullRequestService
@@ -8,7 +9,9 @@ module Pra
       pull_sources.each do |pull_source|
         pull_requests.concat(pull_source.pull_requests)
       end
-      return pull_requests
+      yield FetchStatus.success(pull_requests) if block_given?
+    rescue Exception => error
+      yield FetchStatus.error(error) if block_given?
     end
 
     def self.pull_sources

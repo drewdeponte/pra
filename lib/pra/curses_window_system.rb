@@ -24,6 +24,10 @@ module Pra
       output_string(3, 0, "Fetching pull requests...")
     end
 
+    def fetch_failed(error)
+      output_string(3, 0, "Couldn't fetch pull requests: #{error.message}")
+    end
+
     def refresh_pull_requests(pull_requests)
       @previous_number_of_pull_requests = @current_pull_requests.length
 

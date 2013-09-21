@@ -16,13 +16,42 @@ describe Pra::PullRequestService do
       subject.fetch_pull_requests
     end
 
-    it "returns an array of all the pull-requests from each of the sources" do
-      pull_request_one = double('pull request one')
-      pull_request_two = double('pull request two')
-      pull_source_one = double('pull source one', :pull_requests => [pull_request_one])
-      pull_source_two = double('pull source two', :pull_requests => [pull_request_two])
-      subject.stub(:pull_sources).and_return([pull_source_one, pull_source_two])
-      subject.fetch_pull_requests.should eq([pull_request_one, pull_request_two])
+    context 'when it fetches successfully' do
+      let(:pull_request_one) { double('pull request one') }
+      let(:pull_request_two) { double('pull request two') }
+      let(:pull_source_one) { double('pull source one', :pull_requests => [pull_request_one]) }
+      let(:pull_source_two) { double('pull source two', :pull_requests => [pull_request_two]) }
+
+      before do
+        allow(subject).to receive(:pull_sources).and_return([pull_source_one, pull_source_two])
+      end
+
+      it 'builds a success status object with the pull requests' do
+        expect(Pra::PullRequestService::FetchStatus).to receive(:success).with([pull_request_one, pull_request_two])
+        subject.fetch_pull_requests {}
+      end
+
+      it 'yields the status object' do
+        status = double('success status object')
+        allow(Pra::PullRequestService::FetchStatus).to receive(:success).and_return(status)
+        expect {|b| subject.fetch_pull_requests(&b) }.to yield_with_args(status)
+      end
+    end
+
+    context 'when the fetch raises an exception' do
+      let(:error) { Exception.new('error fetching pull requests') }
+
+      it 'builds an error status object with the error' do
+        allow(subject).to receive(:pull_sources).and_raise(error)
+        expect(Pra::PullRequestService::FetchStatus).to receive(:error).with(error)
+        subject.fetch_pull_requests {}
+      end
+
+      it 'yields the status object' do
+        status = double('error status object')
+        allow(Pra::PullRequestService::FetchStatus).to receive(:error).and_return(status)
+        expect {|b| subject.fetch_pull_requests(&b) }.to yield_with_args(status)
+      end
     end
   end
 

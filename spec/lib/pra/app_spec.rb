@@ -51,14 +51,44 @@ describe Pra::App do
       subject.fetch_and_refresh_pull_requests
     end
 
-    it "tells the window system to refresh pull requests" do
-      Kernel.stub(:sleep)
-      pull_requests = double('fetched pull requests')
-      Pra::PullRequestService.stub(:fetch_pull_requests).and_return(pull_requests)
-      window_system_double = double('window system', fetching_pull_requests: nil)
-      subject.instance_variable_set(:@window_system, window_system_double)
-      expect(window_system_double).to receive(:refresh_pull_requests).with(pull_requests)
-      subject.fetch_and_refresh_pull_requests
+    context 'when the fetch succeeds' do
+      let(:pull_requests) { double('fetched pull requests') }
+      let(:fetch_status) { Pra::PullRequestService::FetchStatus.success(pull_requests) }
+      let(:window_system_double) { double('window system', fetching_pull_requests: nil, fetch_failed: nil) }
+
+      before do
+        allow(Kernel).to receive(:sleep)
+        allow(Pra::PullRequestService).to receive(:fetch_pull_requests).and_yield(fetch_status)
+        subject.instance_variable_set(:@window_system, window_system_double)
+      end
+
+      it "tells the window system to refresh pull requests" do
+        expect(window_system_double).to receive(:refresh_pull_requests).with(pull_requests)
+        subject.fetch_and_refresh_pull_requests
+      end
+    end
+
+    context 'when the fetch fails' do
+      let(:error) { double('error fetching pull requests', message: double('error message'), backtrace: double('backtrace')) }
+      let(:fetch_status) { Pra::PullRequestService::FetchStatus.error(error) }
+      let(:window_system_double) { double('window system', fetching_pull_requests: nil, fetch_failed: nil) }
+
+      before do
+        allow(Kernel).to receive(:sleep)
+        allow(Pra::PullRequestService).to receive(:fetch_pull_requests).and_yield(fetch_status)
+        subject.instance_variable_set(:@window_system, window_system_double)
+      end
+
+      it 'logs the error' do
+        expect(Pra::ErrorLog).to receive(:log).with(error)
+        subject.fetch_and_refresh_pull_requests
+      end
+
+      it 'tells the window system the fetch failed' do
+        allow(Pra::ErrorLog).to receive(:log)
+        expect(window_system_double).to receive(:fetch_failed).with(error)
+        subject.fetch_and_refresh_pull_requests
+      end
     end
 
     it "sleeps for the polling frequency" do
