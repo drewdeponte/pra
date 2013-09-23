@@ -1,4 +1,5 @@
 require 'pra/window_system'
+require 'pra/config'
 require 'launchy'
 require 'curses'
 require 'thread'
@@ -22,10 +23,12 @@ module Pra
 
     def fetching_pull_requests
       output_string(3, 0, "Fetching pull requests...")
+      Curses.setpos(4,0)
+      Curses.clrtoeol
     end
 
-    def fetch_failed(error)
-      output_string(3, 0, "Couldn't fetch pull requests: #{error.message}")
+    def fetch_failed
+      output_string(4, 0, "Failed to fetch pull requests on 1 or more pull sources. Check #{Pra::Config.error_log_path} for details.")
     end
 
     def refresh_pull_requests(pull_requests)
@@ -103,13 +106,16 @@ module Pra
       }
     end
 
+    HEADER_LINE = 6
+    LIST_START_LINE = HEADER_LINE + 2
+
     def draw_current_pull_requests
       @state_lock.synchronize {
         output_string(3, 0, "#{@current_pull_requests.length} Pull Requests")
-        output_string(5, 0, "repository      title                   from_reference          to_reference            author                  service")
-        output_string(6, 0, "--------------------------------------------------------------------------------------------------------------------------------")
+        output_string(HEADER_LINE, 0, "repository      title                   from_reference          to_reference            author                  service")
+        output_string(HEADER_LINE + 1, 0, "--------------------------------------------------------------------------------------------------------------------------------")
         
-        (7...7+@previous_number_of_pull_requests).each do |i|
+        (LIST_START_LINE...LIST_START_LINE+@previous_number_of_pull_requests).each do |i|
           Curses.setpos(i,0)
           Curses.clrtoeol
           Curses.refresh
@@ -117,9 +123,9 @@ module Pra
 
         @current_pull_requests.each_with_index do |pull_request, index|
           if index == @selected_pull_request_index
-            output_highlighted_string(7 + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
+            output_highlighted_string(LIST_START_LINE + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
           else
-            output_string(7 + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
+            output_string(LIST_START_LINE + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
           end
         end
       }

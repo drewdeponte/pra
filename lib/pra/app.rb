@@ -23,17 +23,20 @@ module Pra
 
     def fetch_and_refresh_pull_requests
       @window_system.fetching_pull_requests
+      new_pull_requests = []
 
       Pra::PullRequestService.fetch_pull_requests do |fetch|
         fetch.on_success do |pull_requests|
-          @window_system.refresh_pull_requests(pull_requests)
+          new_pull_requests += pull_requests
         end
 
         fetch.on_error do |error|
           Pra::ErrorLog.log(error)
-          @window_system.fetch_failed(error)
+          @window_system.fetch_failed
         end
       end
+
+      @window_system.refresh_pull_requests(new_pull_requests)
       
       Kernel.sleep(5 * 60)
     end
