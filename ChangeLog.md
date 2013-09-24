@@ -6,6 +6,8 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+#### v1.0.0
+
 * Added connection failure handling so it stays running
   ([\#1](https://github.com/reachlocal/pra/issues/1))
 * Added user notification of connection failures
