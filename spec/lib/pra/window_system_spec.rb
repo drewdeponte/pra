@@ -13,6 +13,12 @@ describe Pra::WindowSystem do
     end
   end
 
+  describe "#fetch_failed" do
+    it "raises a message stating that the pure virtual method has not been implemented" do
+      expect { subject.fetch_failed }.to raise_error(Pra::WindowSystem::PureVirtualMethodNotImplemented)
+    end
+  end
+
   describe "#refresh_pull_requests" do
     it "raises a message stating that the pure virtual method has not been implemented" do
       expect { subject.refresh_pull_requests(double('pull requests')) }.to raise_error(Pra::WindowSystem::PureVirtualMethodNotImplemented)

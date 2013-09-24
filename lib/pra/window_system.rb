@@ -18,6 +18,14 @@ module Pra
       raise PureVirtualMethodNotImplemented, "the 'fetching_pull_requests' method needs to be implemented."
     end
 
+    # This method is a pure virtual method and is called by the system
+    # when an error occurs while fetching pull requests. It is intended to
+    # be a notification to the window system so that it can notify the user
+    # that fetching pull requests failed.
+    def fetch_failed
+      raise PureVirtualMethodNotImplemented, "the 'fetch_failed' method needs to be implemented."
+    end
+
     # This method is a pure virtual method and is intendend for the inheriting
     # class to implement it to handle refreshing the pull requests within in
     # the window system. This method is called evertime the pull request

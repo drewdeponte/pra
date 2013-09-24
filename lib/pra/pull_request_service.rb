@@ -1,14 +1,20 @@
 require 'pra/config'
 require 'pra/pull_source_factory'
+require 'pra/pull_request_service/fetch_status'
 
 module Pra
   module PullRequestService
     def self.fetch_pull_requests
-      pull_requests = []
       pull_sources.each do |pull_source|
-        pull_requests.concat(pull_source.pull_requests)
+        yield fetch_with_status(pull_source)
       end
-      return pull_requests
+    end
+
+    def self.fetch_with_status(pull_source)
+      pull_requests = pull_source.pull_requests
+      FetchStatus.success(pull_requests)
+    rescue Exception => error
+      FetchStatus.error(error)
     end
 
     def self.pull_sources
