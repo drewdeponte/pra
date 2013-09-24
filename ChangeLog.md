@@ -6,6 +6,13 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+* Added connection failure handling so it stays running
+  ([\#1](https://github.com/reachlocal/pra/issues/1))
+* Added user notification of connection failures
+  ([\#1](https://github.com/reachlocal/pra/issues/1))
+* Added error logging to `~/.pra.error.log`
+  ([\#1](https://github.com/reachlocal/pra/issues/1))
+
 #### v0.1.1
 
 * Fixed up the gemspec to include homepage on rubygems.org
