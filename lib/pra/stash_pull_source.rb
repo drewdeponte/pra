@@ -20,7 +20,7 @@ module Pra
     def get_repo_pull_requests(repository_config)
       requests = []
       JSON.parse(rest_api_pull_request_resource(repository_config).get)["values"].each do |request|
-        requests << Pra::PullRequest.new(title: request["title"], from_reference: request["fromRef"]["id"], to_reference: request["toRef"]["id"], author: request["author"]["user"]["name"], link: "#{@config['protocol']}://#{@config['host']}#{request['link']['url']}", service_id: 'stash', repository: repository_config["repository_slug"])
+        requests << Pra::PullRequest.new(title: request["title"], from_reference: request["fromRef"]["id"], to_reference: request["toRef"]["id"], assignee: request["reviewers"].length > 0 ? request["reviewers"].first["user"]["name"] : nil, author: request["author"]["user"]["name"], link: "#{@config['protocol']}://#{@config['host']}#{request['link']['url']}", service_id: 'stash', repository: repository_config["repository_slug"])
       end
       return requests
     end
