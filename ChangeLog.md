@@ -6,6 +6,9 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+* Added "Assignee" column so that users can see which pull requests have
+  already been assigned ([\#10](https://github.com/reachlocal/pra/issues/10))
+
 #### v1.0.0
 
 * Added connection failure handling so it stays running
