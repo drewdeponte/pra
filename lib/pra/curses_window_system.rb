@@ -112,8 +112,8 @@ module Pra
     def draw_current_pull_requests
       @state_lock.synchronize {
         output_string(3, 0, "#{@current_pull_requests.length} Pull Requests")
-        output_string(HEADER_LINE, 0, "repository      title                   from_reference          to_reference            author                  service")
-        output_string(HEADER_LINE + 1, 0, "--------------------------------------------------------------------------------------------------------------------------------")
+        output_string(HEADER_LINE, 0, "repository      title                   from_reference          to_reference            author                  assignee                service")
+        output_string(HEADER_LINE + 1, 0, "-----------------------------------------------------------------------------------------------------------------------------------------------")
         
         (LIST_START_LINE...LIST_START_LINE+@previous_number_of_pull_requests).each do |i|
           Curses.setpos(i,0)
@@ -123,9 +123,9 @@ module Pra
 
         @current_pull_requests.each_with_index do |pull_request, index|
           if index == @selected_pull_request_index
-            output_highlighted_string(LIST_START_LINE + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
+            output_highlighted_string(LIST_START_LINE + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.assignee.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
           else
-            output_string(LIST_START_LINE + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
+            output_string(LIST_START_LINE + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.assignee.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
           end
         end
       }

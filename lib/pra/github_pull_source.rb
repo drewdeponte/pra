@@ -20,7 +20,7 @@ module Pra
     def get_repo_pull_requests(repository_config)
       requests = []
       JSON.parse(rest_api_pull_request_resource(repository_config).get).each do |request|
-        requests << Pra::PullRequest.new(title: request["title"], from_reference: request["head"]["label"], to_reference: request["base"]["label"], author: request["user"]["login"], link: request['html_url'], service_id: 'github', repository: repository_config["repository"])
+        requests << Pra::PullRequest.new(title: request["title"], from_reference: request["head"]["label"], to_reference: request["base"]["label"], author: request["user"]["login"], assignee: request["assignee"] ? request["assignee"]["login"] : nil, link: request['html_url'], service_id: 'github', repository: repository_config["repository"])
       end
       return requests
     end
