@@ -6,6 +6,8 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+#### v1.1.0
+
 * Added "Assignee" column so that users can see which pull requests have
   already been assigned ([\#10](https://github.com/reachlocal/pra/issues/10))
 
