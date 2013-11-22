@@ -134,4 +134,12 @@ describe Pra::Config do
       subject.pull_sources.should eq(pull_source_configs)
     end
   end
+
+  describe "#assignee_blacklist" do
+    it "returns the assignee blacklist value out of the config" do
+      assignee_blacklist_configs = double('assignee blacklist configs')
+      subject.instance_variable_set(:@initial_config, { "assignee_blacklist" => assignee_blacklist_configs })
+      subject.assignee_blacklist.should eq(assignee_blacklist_configs)
+    end
+  end
 end
