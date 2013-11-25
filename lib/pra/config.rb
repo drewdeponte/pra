@@ -40,5 +40,9 @@ module Pra
     def pull_sources
       @initial_config["pull_sources"]
     end
+
+    def assignee_blacklist
+      @initial_config["assignee_blacklist"]
+    end
   end
 end

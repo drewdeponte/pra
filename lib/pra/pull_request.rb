@@ -1,3 +1,5 @@
+require 'pra/config'
+
 module Pra
   class PullRequest
     attr_accessor :title, :from_reference, :to_reference, :author, :assignee, :link, :service_id, :repository
@@ -11,10 +13,6 @@ module Pra
       @link = attributes[:link]
       @service_id = attributes[:service_id]
       @repository = attributes[:repository]
-    end
-
-    def assignee
-      @assignee || ""
     end
   end
 end

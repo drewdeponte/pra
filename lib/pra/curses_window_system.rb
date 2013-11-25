@@ -1,4 +1,5 @@
 require 'pra/window_system'
+require 'pra/curses_pull_request_presenter'
 require 'pra/config'
 require 'launchy'
 require 'curses'
@@ -71,7 +72,7 @@ module Pra
       Curses.curs_set(0)
       Curses.init_pair(1, Curses::COLOR_CYAN, Curses::COLOR_BLACK)
     end
-    
+
     def output_string(row, col, str)
       Curses.setpos(row, col)
       Curses.clrtoeol
@@ -114,7 +115,7 @@ module Pra
         output_string(3, 0, "#{@current_pull_requests.length} Pull Requests")
         output_string(HEADER_LINE, 0, "repository      title                   from_reference          to_reference            author                  assignee                service")
         output_string(HEADER_LINE + 1, 0, "-----------------------------------------------------------------------------------------------------------------------------------------------")
-        
+
         (LIST_START_LINE...LIST_START_LINE+@previous_number_of_pull_requests).each do |i|
           Curses.setpos(i,0)
           Curses.clrtoeol
@@ -122,10 +123,11 @@ module Pra
         end
 
         @current_pull_requests.each_with_index do |pull_request, index|
+          pull_request_presenter = Pra::CursesPullRequestPresenter.new(pull_request)
           if index == @selected_pull_request_index
-            output_highlighted_string(LIST_START_LINE + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.assignee.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
+            output_highlighted_string(LIST_START_LINE + index, 0, "#{pull_request_presenter.repository}\t#{pull_request_presenter.title}\t#{pull_request_presenter.from_reference}\t#{pull_request_presenter.to_reference}\t#{pull_request_presenter.author}\t#{pull_request_presenter.assignee}\t#{pull_request_presenter.service_id}")
           else
-            output_string(LIST_START_LINE + index, 0, "#{pull_request.repository.ljust(15)[0..14]}\t#{pull_request.title.ljust(20)[0..19]}\t#{pull_request.from_reference.ljust(20)[0..19]}\t#{pull_request.to_reference.ljust(20)[0..19]}\t#{pull_request.author.ljust(20)[0..19]}\t#{pull_request.assignee.ljust(20)[0..19]}\t#{pull_request.service_id.ljust(10)[0..9]}")
+            output_string(LIST_START_LINE + index, 0, "#{pull_request_presenter.repository}\t#{pull_request_presenter.title}\t#{pull_request_presenter.from_reference}\t#{pull_request_presenter.to_reference}\t#{pull_request_presenter.author}\t#{pull_request_presenter.assignee}\t#{pull_request_presenter.service_id}")
           end
         end
       }

@@ -21,6 +21,11 @@ directory. The following is an example config that can be used as a starter.
 **your.stash.server**, and the **repositories** sections of each of the pull
 sources.
 
+#### Assignee Blacklist
+
+Reduces noise to more easily determine which pull requests are unassigned. Names
+added will not appear in the assignee column.
+
     {
       "pull_sources": [
         {
@@ -49,6 +54,10 @@ sources.
             ]
           }
         }
+      ],
+      "assignee_blacklist": [
+        "IPT-Capture",
+        "IPT-Core Services"
       ]
     }
 
