@@ -6,6 +6,8 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+#### v1.2.0
+
 * Added Assignee blacklisting so that when you have a group user that
   represents a team assignment it can be blacklisted so that it doesn't show
   up as assigned.
