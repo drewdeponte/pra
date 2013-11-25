@@ -6,6 +6,12 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+* Added Assignee blacklisting so that when you have a group user that
+  represents a team assignment it can be blacklisted so that it doesn't show
+  up as assigned.
+
+#### v1.1.0
+
 * Added "Assignee" column so that users can see which pull requests have
   already been assigned ([\#10](https://github.com/reachlocal/pra/issues/10))
 
