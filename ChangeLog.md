@@ -6,6 +6,12 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+* Added `curses` as a gem dependency because in ruby version 2.1.0 they have
+  removed `curses` from the standard lib. This can be seen in their [release
+  notes](https://www.ruby-lang.org/en/news/2013/12/25/ruby-2-1-0-is-released/)
+  as well as in one of their tickets
+  [\#8584](https://bugs.ruby-lang.org/issues/8584).
+
 #### v1.3.0
 
 * Added support for Stash user profile repositories. This means you can now
