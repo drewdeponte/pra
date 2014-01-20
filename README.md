@@ -21,11 +21,6 @@ directory. The following is an example config that can be used as a starter.
 **your.stash.server**, and the **repositories** sections of each of the pull
 sources.
 
-#### Assignee Blacklist
-
-Reduces noise to more easily determine which pull requests are unassigned. Names
-added will not appear in the assignee column.
-
     {
       "pull_sources": [
         {
@@ -37,6 +32,7 @@ added will not appear in the assignee column.
             "password": "your.password",
             "repositories": [
               { "project_slug": "CAP", "repository_slug": "capture_api" },
+              { "user_slug": "bob.villa", "repository_slug": "personal_notes" },
               { "project_slug": "RELENG", "repository_slug": "ramboo" }
             ]
           }
@@ -65,6 +61,25 @@ I suggest copying and pasting the above starter file into your `~/.pra.json`
 file to get you started. Then simply replace the appropriate fields and the
 **repositories** sections for all the pull sources with the repository
 information for the repositories you want to watch for open pull requests.
+
+#### Stash User & Project Repositories
+
+You may have noticed that the above example shows two repository objects in its
+Stash **repositories** array.
+
+1. Project Scoped Repository - `{ "project_slug": "CAP", "repository_slug": "capture_api" },`
+2. User Scoped Repository - `{ "user_slug": "bob.villa", "repository_slug": "personal_notes" },`
+
+This is because Stash has both the concept of repsositories that are organized
+under Projects and repositories that are organized under Users. Therefore, you
+would want to use the **User Scoped Repository** in scenarios where the
+repository is housed under a user and the **Project Scoped Repository** in
+scenarios where the repository is housed under a project.
+
+#### Assignee Blacklist
+
+Reduces noise to more easily determine which pull requests are unassigned. Names
+added will not appear in the assignee column.
 
 ### GitHub Authentication
 

@@ -26,7 +26,11 @@ module Pra
     end
 
     def rest_api_pull_request_url(repository_config)
-      "#{@config['protocol']}://#{@config['host']}/rest/api/1.0/projects/#{repository_config["project_slug"]}/repos/#{repository_config["repository_slug"]}/pull-requests"
+      if repository_config.has_key?("user_slug")
+        "#{@config['protocol']}://#{@config['host']}/rest/api/1.0/users/#{repository_config["user_slug"]}/repos/#{repository_config["repository_slug"]}/pull-requests"
+      else
+        "#{@config['protocol']}://#{@config['host']}/rest/api/1.0/projects/#{repository_config["project_slug"]}/repos/#{repository_config["repository_slug"]}/pull-requests"
+      end
     end
 
     def rest_api_pull_request_resource(repository_config)
