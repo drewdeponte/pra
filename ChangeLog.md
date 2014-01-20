@@ -6,6 +6,8 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+#### v1.5.0
+
 * Upgraded dependency gems and moved to less pessimisitic versioning
   constraints on the dependencies.
 
