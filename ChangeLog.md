@@ -6,6 +6,9 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+* Upgraded dependency gems and moved to less pessimisitic versioning
+  constraints on the dependencies.
+
 #### v1.4.0
 
 * Added `curses` as a gem dependency because in ruby version 2.1.0 they have
