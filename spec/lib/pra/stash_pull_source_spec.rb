@@ -78,21 +78,42 @@ describe Pra::StashPullSource do
   end
 
   describe "#rest_api_pull_request_url" do
-    let(:config) do
-      {
-        "protocol" => "https",
-        "host" => "my.stash.instance",
-        "username" => "foo",
-        "password" => "bar",
-        "repositories" => [
-          { "project_slug" => "CAP", "repository_slug" => "capture_api" }
-        ]
-      }
+    context "when config is for a user repository" do
+      let(:config) do
+        {
+          "protocol" => "https",
+          "host" => "my.stash.instance",
+          "username" => "foo",
+          "password" => "bar",
+          "repositories" => [
+            { "user_slug" => "andrew.deponte", "repository_slug" => "capture_api" }
+          ]
+        }
+      end
+
+      it "returns the user pull request url compiled from the config options" do
+        pull_source = Pra::StashPullSource.new(config)
+        expect(pull_source.rest_api_pull_request_url({ "user_slug" => "andrew.deponte", "repository_slug" => "capture_api" })).to eq("https://my.stash.instance/rest/api/1.0/users/andrew.deponte/repos/capture_api/pull-requests")
+      end
     end
 
-    it "returns the pull request url compiled from the config options" do
-      pull_source = Pra::StashPullSource.new(config)
-      pull_source.rest_api_pull_request_url({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).should eq("https://my.stash.instance/rest/api/1.0/projects/CAP/repos/capture_api/pull-requests")
+    context "when config is for a project repository" do
+      let(:config) do
+        {
+          "protocol" => "https",
+          "host" => "my.stash.instance",
+          "username" => "foo",
+          "password" => "bar",
+          "repositories" => [
+            { "project_slug" => "CAP", "repository_slug" => "capture_api" }
+          ]
+        }
+      end
+      
+      it "returns the project pull request url compiled from the config options" do
+        pull_source = Pra::StashPullSource.new(config)
+        pull_source.rest_api_pull_request_url({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).should eq("https://my.stash.instance/rest/api/1.0/projects/CAP/repos/capture_api/pull-requests")
+      end
     end
   end
 

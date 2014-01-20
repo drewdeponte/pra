@@ -6,6 +6,10 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+* Added support for Stash user profile repositories. This means you can now
+  have `pra` watch not only your Stash project housed repositories but also
+  your personal repositories that are housed under your Stash user profile.
+
 #### v1.2.0
 
 * Added Assignee blacklisting so that when you have a group user that
