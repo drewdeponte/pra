@@ -136,10 +136,19 @@ describe Pra::Config do
   end
 
   describe "#assignee_blacklist" do
-    it "returns the assignee blacklist value out of the config" do
-      assignee_blacklist_configs = double('assignee blacklist configs')
-      subject.instance_variable_set(:@initial_config, { "assignee_blacklist" => assignee_blacklist_configs })
-      subject.assignee_blacklist.should eq(assignee_blacklist_configs)
+    context 'when config has an assignee blacklist' do
+      it "returns the assignee blacklist value out of the config" do
+        assignee_blacklist_configs = [double('assignee blacklist configs')]
+        subject.instance_variable_set(:@initial_config, { "assignee_blacklist" => assignee_blacklist_configs })
+        subject.assignee_blacklist.should eq(assignee_blacklist_configs)
+      end
+    end
+
+    context "when config does not have an assignee blacklist" do
+      it "returns an empty array" do
+        subject.instance_variable_set(:@initial_config, {})
+        subject.assignee_blacklist.should eq([])
+      end
     end
   end
 end

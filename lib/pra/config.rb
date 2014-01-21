@@ -42,7 +42,7 @@ module Pra
     end
 
     def assignee_blacklist
-      @initial_config["assignee_blacklist"]
+      Array(@initial_config["assignee_blacklist"])
     end
   end
 end
