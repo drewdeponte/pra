@@ -6,6 +6,8 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+#### v1.5.1
+
 * Fix bug where failed if no `assignee_blacklist` was found in config. Thanks
   to @gfmtim.
 
