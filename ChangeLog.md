@@ -6,6 +6,9 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+* Fix bug where failed if no `assignee_blacklist` was found in config. Thanks
+  to @gfmtim.
+
 #### v1.5.0
 
 * Upgraded dependency gems and moved to less pessimisitic versioning
