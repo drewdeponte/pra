@@ -52,7 +52,7 @@ describe Pra::PullRequestService::FetchStatus do
       subject { Pra::PullRequestService::FetchStatus.new(:success, double) }
 
       it 'returns true' do
-        expect(subject.success?).to be_true
+        expect(subject.success?).to be_truthy
       end
     end
 
@@ -60,7 +60,7 @@ describe Pra::PullRequestService::FetchStatus do
       subject { Pra::PullRequestService::FetchStatus.new(double, double) }
 
       it 'returns false' do
-        expect(subject.success?).to be_false
+        expect(subject.success?).to be_falsey
       end
     end
   end
@@ -70,7 +70,7 @@ describe Pra::PullRequestService::FetchStatus do
       subject { Pra::PullRequestService::FetchStatus.new(:error, double) }
 
       it 'returns true' do
-        expect(subject.error?).to be_true
+        expect(subject.error?).to be_truthy
       end
     end
 
@@ -78,7 +78,7 @@ describe Pra::PullRequestService::FetchStatus do
       subject { Pra::PullRequestService::FetchStatus.new(double, double) }
 
       it 'returns false' do
-        expect(subject.error?).to be_false
+        expect(subject.error?).to be_falsey
       end
     end
   end
