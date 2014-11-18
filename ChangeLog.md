@@ -6,6 +6,8 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+#### v1.6.0
+
 * Switch to using Faraday instead of RestClient.
 
 #### v1.5.1
