@@ -1,6 +1,6 @@
 require 'pra/pull_source'
 require 'pra/pull_request'
-require 'rest_client'
+require 'faraday'
 require 'json'
 
 module Pra
@@ -19,7 +19,7 @@ module Pra
 
     def get_repo_pull_requests(repository_config)
       requests = []
-      JSON.parse(rest_api_pull_request_resource(repository_config).get)["values"].each do |request|
+      JSON.parse(rest_api_pull_request_resource(repository_config))["values"].each do |request|
         requests << Pra::PullRequest.new(title: request["title"], from_reference: request["fromRef"]["id"], to_reference: request["toRef"]["id"], assignee: request["reviewers"].length > 0 ? request["reviewers"].first["user"]["name"] : nil, author: request["author"]["user"]["name"], link: "#{@config['protocol']}://#{@config['host']}#{request['link']['url']}", service_id: 'stash', repository: repository_config["repository_slug"])
       end
       return requests
@@ -34,7 +34,14 @@ module Pra
     end
 
     def rest_api_pull_request_resource(repository_config)
-      RestClient::Resource.new(rest_api_pull_request_url(repository_config), user: @config['username'], password: @config['password'], content_type: :json, accept: :json)
+      conn = Faraday.new
+      conn.basic_auth(@config['username'], @config['password'])
+      resp = conn.get do |req|
+        req.url rest_api_pull_request_url(repository_config)
+        req.headers['Content-Type'] = 'application/json'
+        req.headers['Accept'] = 'application/json'
+      end
+      resp.body
     end
   end
 end

@@ -1,7 +1,7 @@
 require 'pra/pull_source'
 require 'pra/pull_request'
-require 'rest_client'
 require 'json'
+require 'faraday'
 
 module Pra
   class GithubPullSource < Pra::PullSource
@@ -19,7 +19,7 @@ module Pra
 
     def get_repo_pull_requests(repository_config)
       requests = []
-      JSON.parse(rest_api_pull_request_resource(repository_config).get).each do |request|
+      JSON.parse(rest_api_pull_request_resource(repository_config)).each do |request|
         requests << Pra::PullRequest.new(title: request["title"], from_reference: request["head"]["label"], to_reference: request["base"]["label"], author: request["user"]["login"], assignee: request["assignee"] ? request["assignee"]["login"] : nil, link: request['html_url'], service_id: 'github', repository: repository_config["repository"])
       end
       return requests
@@ -30,7 +30,14 @@ module Pra
     end
 
     def rest_api_pull_request_resource(repository_config)
-      RestClient::Resource.new(rest_api_pull_request_url(repository_config), user: @config['username'], password: @config['password'], content_type: :json, accept: :json)
+      conn = Faraday.new
+      conn.basic_auth(@config['username'], @config['password'])
+      resp = conn.get do |req|
+        req.url rest_api_pull_request_url(repository_config)
+        req.headers['Content-Type'] = 'application/json'
+        req.headers['Accept'] = 'application/json'
+      end
+      resp.body
     end
   end
 end

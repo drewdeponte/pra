@@ -70,9 +70,7 @@ describe Pra::StashPullSource do
         ]
       }
       pull_source = Pra::StashPullSource.new(config)
-      the_resource = double
-      pull_source.stub(:rest_api_pull_request_resource).with({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).and_return(the_resource)
-      the_resource.should_receive(:get).and_return('{ "values": [] }')
+      pull_source.stub(:rest_api_pull_request_resource).with({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).and_return('{ "values": [] }')
       pull_source.get_repo_pull_requests({ "project_slug" => "CAP", "repository_slug" => "capture_api" })
     end
   end
@@ -134,16 +132,30 @@ describe Pra::StashPullSource do
 
     subject { Pra::StashPullSource.new(config) }
 
-    it "gets the repository url compiled from the config options" do
-      subject.should_receive(:rest_api_pull_request_url).with(repo_config)
+    it "creates a Faraday connection" do
+      expect(Faraday).to receive(:new).and_return(double.as_null_object)
       subject.rest_api_pull_request_resource(repo_config)
     end
 
-    it "builds a restclient resource using the pull request url and user credentials" do
-      url = "https://my.stash.instance/rest/api/1.0/projects/CAP/repos/capture_api/pull-requests"
-      subject.stub(:rest_api_pull_request_url).and_return(url)
-      RestClient::Resource.should_receive(:new).with(url, {user: "foo", password: "bar", content_type: :json, accept: :json})
+    it "set the http basic auth credentials" do
+      conn = double('faraday connection').as_null_object
+      allow(Faraday).to receive(:new).and_return(conn)
+      expect(conn).to receive(:basic_auth).with("foo", "bar")
       subject.rest_api_pull_request_resource(repo_config)
+    end
+
+    it "makes request using faraday connection" do
+      conn = double('faraday connection').as_null_object
+      allow(Faraday).to receive(:new).and_return(conn)
+      expect(conn).to receive(:get)
+      subject.rest_api_pull_request_resource(repo_config)
+    end
+
+    it "returns the responses body" do
+      conn = double('faraday connection').as_null_object
+      allow(Faraday).to receive(:new).and_return(conn)
+      expect(conn).to receive(:get).and_return(double('response', body: 'hoopytbody'))
+      expect(subject.rest_api_pull_request_resource(repo_config)).to eq('hoopytbody')
     end
   end
 end

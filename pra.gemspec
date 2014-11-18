@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.1"
   spec.add_development_dependency "rspec", "~> 2.14"
 
-  spec.add_dependency "rest-client", "~> 1.6"
+  spec.add_dependency "faraday", "~> 0.9"
   spec.add_dependency "launchy", "~> 2.4"
   spec.add_dependency "curses", "~> 1.0"
 end

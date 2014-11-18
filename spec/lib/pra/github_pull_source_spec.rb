@@ -70,9 +70,7 @@ describe Pra::GithubPullSource do
         ]
       }
       pull_source = Pra::GithubPullSource.new(config)
-      the_resource = double
-      pull_source.stub(:rest_api_pull_request_resource).with({ "owner" => "reachlocal", "repository" => "snapdragon" }).and_return(the_resource)
-      the_resource.should_receive(:get).and_return('[]')
+      pull_source.stub(:rest_api_pull_request_resource).with({ "owner" => "reachlocal", "repository" => "snapdragon" }).and_return('[]')
       pull_source.get_repo_pull_requests({ "owner" => "reachlocal", "repository" => "snapdragon" })
     end
   end
@@ -113,16 +111,30 @@ describe Pra::GithubPullSource do
 
     subject { Pra::GithubPullSource.new(config) }
 
-    it "gets the repository url compiled from the config options" do
-      subject.should_receive(:rest_api_pull_request_url).with(repo_config)
+    it "creates a Faraday connection" do
+      expect(Faraday).to receive(:new).and_return(double.as_null_object)
       subject.rest_api_pull_request_resource(repo_config)
     end
 
-    it "builds a restclient resource using the pull request url and user credentials" do
-      url = "https://my.github.instance/repos/reachlocal/snapdragon/pulls"
-      subject.stub(:rest_api_pull_request_url).and_return(url)
-      RestClient::Resource.should_receive(:new).with(url, {user: "foo", password: "bar", content_type: :json, accept: :json})
+    it "set the http basic auth credentials" do
+      conn = double('faraday connection').as_null_object
+      allow(Faraday).to receive(:new).and_return(conn)
+      expect(conn).to receive(:basic_auth).with("foo", "bar")
       subject.rest_api_pull_request_resource(repo_config)
+    end
+
+    it "makes request using faraday connection" do
+      conn = double('faraday connection').as_null_object
+      allow(Faraday).to receive(:new).and_return(conn)
+      expect(conn).to receive(:get)
+      subject.rest_api_pull_request_resource(repo_config)
+    end
+
+    it "returns the responses body" do
+      conn = double('faraday connection').as_null_object
+      allow(Faraday).to receive(:new).and_return(conn)
+      expect(conn).to receive(:get).and_return(double('response', body: 'hoopytbody'))
+      expect(subject.rest_api_pull_request_resource(repo_config)).to eq('hoopytbody')
     end
   end
 end
