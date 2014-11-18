@@ -182,41 +182,36 @@ following:
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
-##### RVM
+##### RVM/rbenv
 
-We use [RVM](http://rvm.io/) with `pra` to encapsulate the dependency gems in our
-development environments. Therefore, we have the `.ruby-version` and
-`.ruby-gemset` files in the repository which define the current version of
-ruby and the gemset that we are developing with.
+We use [RVM](http://rvm.io/) or [rbenv](https://github.com/sstephenson/rbenv)
+with `pra` to encapsulate the dependency gems in our development environments.
+Therefore, we have the `.ruby-version` file in the repository which define the
+current version of ruby that we are developing with.
 
-You should have [RVM](http://rvm.io) installed of course and when you change
-into the project root directory it should switch to the proper ruby version if
-you have it intsalled via [RVM](http://rvm.io). It should also create and
-switch to the proper gemset.
+You should have [RVM](http://rvm.io) or
+[rbenv](https://github.com/sstephenson/rbenv) installed of course and when you
+change into the project root directory it should switch to the proper ruby
+version if you have it intsalled via [RVM](http://rvm.io) or
+[rbenv](https://github.com/sstephenson/rbenv).
 
-If the proper version of ruby is NOT installed via [RVM](http://rvm.io) you
-should first install that version of ruby and then change out of the project
-root directory, then change back into it and verify that you are in the
-proper ruby version and gemset. This can be done with the following command.
-
-    rvm current
-
-The above command should have output the following
-
-    ruby-2.0.0-p247@pra
+If the proper version of ruby is NOT installed via [RVM](http://rvm.io) or
+[rbenv](https://github.com/sstephenson/rbenv) you should first install that
+version of ruby and then change out of the project root directory, then change
+back into it and verify that you are in the proper ruby version.
 
 ##### Bundler
 
 We use [Bundler](http://bundler.io/) to manage the development dependencies of
-`pra`. Once you got setup with [RVM](http://rvm.io) as described above you
-should be able to install all the development dependencies using the following
-command:
+`pra`. Once you are setup with [RVM](http://rvm.io) or
+[rbenv](https://github.com/sstephenson/rbenv) as described above you should be
+able to install all the development dependencies using the following command:
 
     bundle
 
 ##### Test Driven Development
 
-I eveloped `pra` using the TDD methodology with
+I developed `pra` using the TDD methodology with
 [RSpec](http://www.relishapp.com/rspec) as the testing tool of choice.
 Therefore, if you are going to contribute code to `pra` please TDD your code
 changes using [RSpec](http://www.relishapp.com/rspec). If you do not submit
@@ -225,12 +220,13 @@ you add appropriate test coverage.
 
 ##### Run Development Version Manually
 
-If you have setup [RVM](http://rvm.io) as described above and installed the
-development dependencies using [Bundler](http://bundler.io/) as described
+If you have setup [RVM](http://rvm.io) or
+[rbenv](https://github.com/sstephenson/rbenv) as described above and installed
+the development dependencies using [Bundler](http://bundler.io/) as described
 above you should be able to run the development version of `pra` by running
 the following command:
 
-    ./bin/pra
+    bundle exec ./bin/pra
 
 *Note:* The above of course assumes that you have a `~/.pra.json` file
 already configured.
