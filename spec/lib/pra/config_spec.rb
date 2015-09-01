@@ -102,6 +102,15 @@ describe Pra::Config do
     end
   end
 
+  describe ".log_path" do
+    subject { Pra::Config }
+
+    it "returns the joined users home directory and .pra.log to create the path" do
+      allow(subject).to receive(:users_home_directory).and_return('/home/someuser')
+      expect(subject.log_path).to eq('/home/someuser/.pra.log')
+    end
+  end
+
   describe ".users_home_directory" do
     subject { Pra::Config }
 
