@@ -6,6 +6,10 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+* Add light weight logging with timestamps
+* Add Ruby 2.2.3 support
+* Add Ruby 2.2.2 support
+
 #### v1.6.0
 
 * Switch to using Faraday instead of RestClient.

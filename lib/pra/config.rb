@@ -29,6 +29,10 @@ module Pra
       return File.join(self.users_home_directory, '.pra.errors.log')
     end
 
+    def self.log_path
+      return File.join(self.users_home_directory, '.pra.log')
+    end
+
     def self.users_home_directory
       return ENV['HOME']
     end
