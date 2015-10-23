@@ -6,6 +6,8 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+#### v1.7.1
+
 * Fix bug in curses windows system
 
 #### v1.7.0
