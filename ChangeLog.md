@@ -6,6 +6,8 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+#### v1.7.0
+
 * Upgrade to latest gem standards
 * Fix flash on navigation change
 * Switch to default terminal color scheme
