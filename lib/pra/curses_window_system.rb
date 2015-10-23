@@ -69,8 +69,9 @@ module Pra
       Curses.init_screen
       Curses.stdscr.keypad(true)
       Curses.start_color
+      Curses.use_default_colors
       Curses.curs_set(0)
-      Curses.init_pair(1, Curses::COLOR_CYAN, Curses::COLOR_BLACK)
+      Curses.init_pair(Curses::COLOR_CYAN, Curses::COLOR_CYAN, Curses::COLOR_WHITE)
     end
 
     def output_string(row, col, str)
@@ -81,7 +82,7 @@ module Pra
     end
 
     def output_highlighted_string(row, col, str)
-      Curses.attron(Curses.color_pair(1)|Curses::A_NORMAL) {
+      Curses.attron(Curses.color_pair(Curses::COLOR_CYAN)|Curses::A_NORMAL) {
         output_string(row, col, str)
       }
     end
