@@ -6,6 +6,7 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+* Switch to default terminal color scheme
 * Add light weight logging with timestamps
 * Add Ruby 2.2.3 support
 * Add Ruby 2.2.2 support
