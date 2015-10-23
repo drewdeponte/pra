@@ -6,6 +6,7 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+* Upgrade to latest gem standards
 * Fix flash on navigation change
 * Switch to default terminal color scheme
 * Add light weight logging with timestamps
