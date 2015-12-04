@@ -118,11 +118,10 @@ module Pra
         output_string(HEADER_LINE + 1, 0, "-----------------------------------------------------------------------------------------------------------------------------------------------")
 
         if @previous_number_of_pull_requests > @current_pull_requests.length
-          num_left_over = @previous_number_of_pull_requests - @current_pull_requests.length
-          start_line_of_left_overs = LIST_START_LINE+@current_pull_requests.length + 1
-          last_line_of_left_overs = LIST_START_LINE+@previous_number_of_pull_requests
-          (start_line_of_left_overs...last_line_of_left_overs).each do |i|
-            Curses.setpos(i,0)
+          start_line_of_left_overs = LIST_START_LINE+@current_pull_requests.length
+          last_line_of_left_overs = LIST_START_LINE+@previous_number_of_pull_requests - 1
+          (start_line_of_left_overs..last_line_of_left_overs).each do |i|
+            Curses.setpos(i, 0)
             Curses.clrtoeol
           end
           Curses.refresh
