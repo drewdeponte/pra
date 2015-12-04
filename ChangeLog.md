@@ -6,6 +6,8 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+#### v1.7.2
+
 * Fix bug #2, left over PRs not clearing
 
 #### v1.7.1
