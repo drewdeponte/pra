@@ -7,11 +7,11 @@ module Pra
     end
 
     def repository
-      force_length(@pull_request.repository, 15)
+      force_length(@pull_request.repository, 20)
     end
 
     def title
-      force_length(@pull_request.title, 20)
+      force_length(@pull_request.title, 40)
     end
 
     def from_reference

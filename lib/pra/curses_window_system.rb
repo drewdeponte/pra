@@ -114,7 +114,7 @@ module Pra
     def draw_current_pull_requests
       @state_lock.synchronize {
         output_string(3, 0, "#{@current_pull_requests.length} Pull Requests")
-        output_string(HEADER_LINE, 0, "repository      title                   from_reference          to_reference            author                  assignee                service")
+        output_string(HEADER_LINE, 0, "repository              title                                           author                  assignee                service")
         output_string(HEADER_LINE + 1, 0, "-----------------------------------------------------------------------------------------------------------------------------------------------")
 
         if @previous_number_of_pull_requests > @current_pull_requests.length
@@ -130,9 +130,9 @@ module Pra
         @current_pull_requests.each_with_index do |pull_request, index|
           pull_request_presenter = Pra::CursesPullRequestPresenter.new(pull_request)
           if index == @selected_pull_request_index
-            output_highlighted_string(LIST_START_LINE + index, 0, "#{pull_request_presenter.repository}\t#{pull_request_presenter.title}\t#{pull_request_presenter.from_reference}\t#{pull_request_presenter.to_reference}\t#{pull_request_presenter.author}\t#{pull_request_presenter.assignee}\t#{pull_request_presenter.service_id}")
+            output_highlighted_string(LIST_START_LINE + index, 0, "#{pull_request_presenter.repository}\t#{pull_request_presenter.title}\t#{pull_request_presenter.author}\t#{pull_request_presenter.assignee}\t#{pull_request_presenter.service_id}")
           else
-            output_string(LIST_START_LINE + index, 0, "#{pull_request_presenter.repository}\t#{pull_request_presenter.title}\t#{pull_request_presenter.from_reference}\t#{pull_request_presenter.to_reference}\t#{pull_request_presenter.author}\t#{pull_request_presenter.assignee}\t#{pull_request_presenter.service_id}")
+            output_string(LIST_START_LINE + index, 0, "#{pull_request_presenter.repository}\t#{pull_request_presenter.title}\t#{pull_request_presenter.author}\t#{pull_request_presenter.assignee}\t#{pull_request_presenter.service_id}")
           end
         end
       }
