@@ -23,16 +23,20 @@ module Pra
     end
 
     def author
-      force_length(@pull_request.author, 20)
+      force_length(@pull_request.author, 14)
     end
 
     def assignee
-      return force_length('', 20) if @pull_request.assignee.nil? || blacklisted?(@pull_request.assignee)
-      force_length(@pull_request.assignee, 20)
+      return force_length('', 14) if @pull_request.assignee.nil? || blacklisted?(@pull_request.assignee)
+      force_length(@pull_request.assignee, 14)
     end
 
     def service_id
-      force_length(@pull_request.service_id, 10)
+      force_length(@pull_request.service_id, 8)
+    end
+
+    def labels
+      force_length(@pull_request.labels, 12)
     end
 
     def assignee_blacklist

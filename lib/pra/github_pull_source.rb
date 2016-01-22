@@ -52,7 +52,8 @@ module Pra
                                                   assignee: request["assignee"] ? request["assignee"]["login"] : nil,
                                                   link: request['html_url'],
                                                   service_id: 'github',
-                                                  repository: repository)
+                                                  repository: repository,
+                                                  labels: request["labels"].collect{|l| l["name"]}.join(","))
           end
         rescue StandardError => e
           Pra::Log.log("Error: #{e.to_s}")
