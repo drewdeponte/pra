@@ -44,6 +44,10 @@ module Pra
       config.assignee_blacklist
     end
 
+    def to_s
+      "#{repository}\t#{title}\t#{author}\t#{assignee}\t#{labels}\t#{service_id}"
+    end
+
     private
 
     def force_length(string, length)

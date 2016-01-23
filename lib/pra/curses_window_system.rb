@@ -13,6 +13,7 @@ module Pra
       @selected_pull_request_index = 0
       @current_pull_requests = []
       @previous_number_of_pull_requests = 0
+      @last_updated = nil
       @state_lock = Mutex.new
     end
 
@@ -38,6 +39,7 @@ module Pra
       @state_lock.synchronize {
         @current_pull_requests = pull_requests.dup
       }
+      @last_updated = Time.now
       draw_current_pull_requests
     end
 
@@ -113,10 +115,11 @@ module Pra
 
     def draw_current_pull_requests
       @state_lock.synchronize {
-        output_string(3, 0, "#{@current_pull_requests.length} Pull Requests")
+        output_string(3, 0, "#{@current_pull_requests.length} Pull Requests @ #{@last_updated}")
         output_string(HEADER_LINE, 0, "repository              title                                           author          assignee       labels           service")
         output_string(HEADER_LINE + 1, 0, "-----------------------------------------------------------------------------------------------------------------------------------")
 
+        # clear lines that should no longer exist
         if @previous_number_of_pull_requests > @current_pull_requests.length
           start_line_of_left_overs = LIST_START_LINE+@current_pull_requests.length
           last_line_of_left_overs = LIST_START_LINE+@previous_number_of_pull_requests - 1
@@ -127,12 +130,13 @@ module Pra
           Curses.refresh
         end
 
+        # go through and redraw all the pull requests
         @current_pull_requests.each_with_index do |pull_request, index|
           pull_request_presenter = Pra::CursesPullRequestPresenter.new(pull_request)
           if index == @selected_pull_request_index
-            output_highlighted_string(LIST_START_LINE + index, 0, "#{pull_request_presenter.repository}\t#{pull_request_presenter.title}\t#{pull_request_presenter.author}\t#{pull_request_presenter.assignee}\t#{pull_request_presenter.labels}\t#{pull_request_presenter.service_id}")
+            output_highlighted_string(LIST_START_LINE + index, 0, pull_request_presenter.to_s)
           else
-            output_string(LIST_START_LINE + index, 0, "#{pull_request_presenter.repository}\t#{pull_request_presenter.title}\t#{pull_request_presenter.author}\t#{pull_request_presenter.assignee}\t#{pull_request_presenter.labels}\t#{pull_request_presenter.service_id}")
+            output_string(LIST_START_LINE + index, 0, pull_request_presenter.to_s)
           end
         end
       }

@@ -116,6 +116,17 @@ describe Pra::CursesPullRequestPresenter do
     end
   end
 
+  describe '#to_s' do
+    it 'returns a string representing the pull request for curses' do
+      pull_request = double('pull request', repository: 'some repo',
+                            title: 'some title', author: 'some author',
+                            assignee: 'some assignee', labels: 'some labels',
+                            service_id: 'some service id')
+      presenter = Pra::CursesPullRequestPresenter.new(pull_request)
+      expect(presenter.to_s).to eq("some repo           \tsome title                              \tsome author   \tsome assignee \tsome labels \tsome ser")
+    end
+  end
+
   describe '#blacklisted?' do
     context 'when assignee IS blacklisted' do
       it 'returns true' do
