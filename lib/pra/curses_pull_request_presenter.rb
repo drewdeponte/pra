@@ -1,4 +1,5 @@
 require 'pra/config'
+require 'time-lord'
 
 module Pra
   class CursesPullRequestPresenter
@@ -39,13 +40,18 @@ module Pra
       force_length(@pull_request.labels, 12)
     end
 
+    def updated_at
+      last_updated_words = @pull_request.updated_at.to_time.ago.to_words
+      force_length(last_updated_words, 16)
+    end
+
     def assignee_blacklist
       config = Pra::Config.load_config
       config.assignee_blacklist
     end
 
     def to_s
-      "#{repository}\t#{title}\t#{author}\t#{assignee}\t#{labels}\t#{service_id}"
+      "#{repository}\t#{title}\t#{author}\t#{assignee}\t#{labels}\t#{updated_at}"
     end
 
     private

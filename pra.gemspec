@@ -27,4 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "faraday", "~> 0.9"
   spec.add_dependency "launchy", "~> 2.4"
   spec.add_dependency "curses", "~> 1.0"
+  spec.add_dependency "time-lord", "~> 1.0"
 end

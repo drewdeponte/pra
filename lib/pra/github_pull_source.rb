@@ -53,6 +53,7 @@ module Pra
                                                   link: request['html_url'],
                                                   service_id: 'github',
                                                   repository: repository,
+                                                  updated_at: request["updated_at"],
                                                   labels: request["labels"].collect{|l| l["name"]}.join(","))
           end
         rescue StandardError => e
