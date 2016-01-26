@@ -8,13 +8,39 @@ require 'thread'
 module Pra
   class CursesWindowSystem < Pra::WindowSystem
     ENTER_KEY = 10
+    ENTER_KEY = 10
 
     def initialize
       @selected_pull_request_index = 0
       @current_pull_requests = []
       @previous_number_of_pull_requests = 0
-      @last_updated = nil
+      @last_updated = nil 
       @state_lock = Mutex.new
+      @last_updated_access_lock = Mutex.new
+      @force_update = true
+      @force_update_access_lock = Mutex.new
+    end
+
+    def last_updated
+      current_last_updated = nil
+      @last_updated_access_lock.synchronize {
+        current_last_updated = @last_updated.dup
+      }
+      current_last_updated
+    end
+
+    def force_refresh
+      do_force_update = false
+      @force_update_access_lock.synchronize {
+        do_force_update = @force_update
+      }
+      do_force_update
+    end
+
+    def force_refresh=(force_update)
+      @force_update_access_lock.synchronize {
+        @force_update = force_update
+      }
     end
 
     def setup
@@ -53,6 +79,8 @@ module Pra
         when 'k', Curses::Key::UP
           move_selection_up
           draw_current_pull_requests
+        when 'r'
+          @force_update = true
         when 'o', ENTER_KEY
           @state_lock.synchronize {
             Launchy.open(@current_pull_requests[@selected_pull_request_index].link)
@@ -91,7 +119,7 @@ module Pra
 
     def display_instructions
       output_string(0, 0, "Pra: Helping you own pull requests")
-      output_string(1, 0, "quit: q, up: k|#{"\u25B2".encode("UTF-8")}, down: j|#{"\u25BC".encode("UTF-8")}, open: o|#{"\u21A9".encode("UTF-8")}")
+      output_string(1, 0, "quit: q, up: k|#{"\u25B2".encode("UTF-8")}, down: j|#{"\u25BC".encode("UTF-8")}, open: o|#{"\u21A9".encode("UTF-8")}, refresh: r")
     end
 
     def move_selection_up

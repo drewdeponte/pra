@@ -22,23 +22,26 @@ module Pra
     end
 
     def fetch_and_refresh_pull_requests
-      @window_system.fetching_pull_requests
-      new_pull_requests = []
+      if @window_system.force_refresh || Time.now - @window_system.last_updated > 60*5
+        @window_system.force_refresh = false
+        @window_system.fetching_pull_requests
+        new_pull_requests = []
 
-      Pra::PullRequestService.fetch_pull_requests do |fetch|
-        fetch.on_success do |pull_requests|
-          new_pull_requests += pull_requests
+        Pra::PullRequestService.fetch_pull_requests do |fetch|
+          fetch.on_success do |pull_requests|
+            new_pull_requests += pull_requests
+          end
+
+          fetch.on_error do |error|
+            Pra::ErrorLog.log(error)
+            @window_system.fetch_failed
+          end
         end
 
-        fetch.on_error do |error|
-          Pra::ErrorLog.log(error)
-          @window_system.fetch_failed
-        end
+        @window_system.refresh_pull_requests(new_pull_requests)
       end
-
-      @window_system.refresh_pull_requests(new_pull_requests)
       
-      Kernel.sleep(5 * 60)
+      Kernel.sleep(0.1)
     end
 
     def pull_request_fetcher_thread
