@@ -8,7 +8,6 @@ require 'thread'
 module Pra
   class CursesWindowSystem < Pra::WindowSystem
     ENTER_KEY = 10
-    ENTER_KEY = 10
 
     def initialize
       @selected_pull_request_index = 0
