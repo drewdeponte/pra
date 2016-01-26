@@ -140,11 +140,39 @@ module Pra
     HEADER_LINE = 6
     LIST_START_LINE = HEADER_LINE + 2
 
+    def columns
+      [
+        { name: :repository, size: 28, padding: 2 },
+        { name: :title, size: 45, padding: 2 },
+        { name: :author, size: 14, padding: 2 },
+        { name: :assignee, size: 14, padding: 2 },
+        { name: :labels, size: 12, padding: 2 },
+        { name: :updated_at, size: 16, padding: 2 }
+      ]
+    end
+
+    def header_width
+      @header_width ||= columns.reduce(0) do |t,c| 
+        c[:size] + c[:padding] + t
+      end
+    end
+
+    def headers
+      header = ""
+      columns.each do |column|
+        header << "#{column[:name]}"
+        header << (" " * (column[:size] - column[:name].length))
+        header << " " * column[:padding]
+      end
+
+      header
+    end
+
     def draw_current_pull_requests
       @state_lock.synchronize {
         output_string(3, 0, "#{@current_pull_requests.length} Pull Requests @ #{@last_updated}")
-        output_string(HEADER_LINE, 0, "repository              title                                           author          assignee       labels           updated at")
-        output_string(HEADER_LINE + 1, 0, "---------------------------------------------------------------------------------------------------------------------------------------")
+        output_string(HEADER_LINE, 0, headers)
+        output_string(HEADER_LINE + 1, 0, "-" * header_width)
 
         # clear lines that should no longer exist
         if @previous_number_of_pull_requests > @current_pull_requests.length
@@ -161,9 +189,9 @@ module Pra
         @current_pull_requests.each_with_index do |pull_request, index|
           pull_request_presenter = Pra::CursesPullRequestPresenter.new(pull_request)
           if index == @selected_pull_request_index
-            output_highlighted_string(LIST_START_LINE + index, 0, pull_request_presenter.to_s)
+            output_highlighted_string(LIST_START_LINE + index, 0, pull_request_presenter.present(columns))
           else
-            output_string(LIST_START_LINE + index, 0, pull_request_presenter.to_s)
+            output_string(LIST_START_LINE + index, 0, pull_request_presenter.present(columns))
           end
         end
       }

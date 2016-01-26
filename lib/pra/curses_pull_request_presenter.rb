@@ -8,41 +8,43 @@ module Pra
     end
 
     def repository
-      force_length(@pull_request.repository, 20)
+      @pull_request.repository
     end
 
     def title
-      force_length(@pull_request.title, 40)
+      @pull_request.title
     end
 
     def from_reference
-      force_length(@pull_request.from_reference, 20)
+      @pull_request.from_reference
     end
 
     def to_reference
-      force_length(@pull_request.to_reference, 20)
+      @pull_request.to_reference
     end
 
     def author
-      force_length(@pull_request.author, 14)
+      @pull_request.author
     end
 
     def assignee
-      return force_length('', 14) if @pull_request.assignee.nil? || blacklisted?(@pull_request.assignee)
-      force_length(@pull_request.assignee, 14)
+      if @pull_request.assignee.nil? || blacklisted?(@pull_request.assignee)
+        return ""
+      else
+        @pull_request.assignee
+      end
     end
 
     def service_id
-      force_length(@pull_request.service_id, 8)
+      @pull_request.service_id
     end
 
     def labels
-      force_length(@pull_request.labels, 12)
+      @pull_request.labels
     end
 
     def updated_at
-      last_updated_words = @pull_request.updated_at.to_time.ago.to_words
-      force_length(last_updated_words, 16)
+      @pull_request.updated_at.to_time.ago.to_words
     end
 
     def assignee_blacklist
@@ -50,8 +52,13 @@ module Pra
       config.assignee_blacklist
     end
 
-    def to_s
-      "#{repository}\t#{title}\t#{author}\t#{assignee}\t#{labels}\t#{updated_at}"
+    def present(columns)
+      row = ""
+      columns.each do |column|
+        row << force_length(send(column[:name]), column[:size])
+        row << (" " * column[:padding])
+      end
+      row
     end
 
     private
