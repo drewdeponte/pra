@@ -22,7 +22,7 @@ module Pra
     end
 
     def fetch_and_refresh_pull_requests
-      if @window_system.force_refresh || Time.now - @window_system.last_updated > 60*5
+      if @window_system.force_refresh || Time.now - @window_system.last_updated > refresh_interval
         @window_system.force_refresh = false
         @window_system.fetching_pull_requests
         new_pull_requests = []
@@ -48,6 +48,11 @@ module Pra
       while( true ) do
         fetch_and_refresh_pull_requests
       end
+    end
+    
+    def refresh_interval
+      config = Pra::Config.load_config
+      config.refresh_interval
     end
   end
 end

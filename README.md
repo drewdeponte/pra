@@ -54,7 +54,8 @@ sources.
       "assignee_blacklist": [
         "IPT-Capture",
         "IPT-Core Services"
-      ]
+      ],
+      "refresh_interval": 300
     }
 
 I suggest copying and pasting the above starter file into your `~/.pra.json`
