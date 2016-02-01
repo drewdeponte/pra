@@ -67,21 +67,12 @@ describe Pra::PullRequestService do
   end
 
   describe "#pull_sources" do
-    it "gets the users config" do
-      subject.stub(:map_config_to_pull_sources)
-      Pra::Config.should_receive(:load_config)
-      subject.pull_sources
-    end
-
     it "maps the pull-request sources from the config to PullSource objects" do
-      config = double('users config')
-      Pra::Config.stub(:load_config).and_return(config)
-      subject.should_receive(:map_config_to_pull_sources).with(config)
+      subject.should_receive(:map_config_to_pull_sources)
       subject.pull_sources
     end
 
     it "returns the mapped pull-request sources" do
-      Pra::Config.stub(:load_config)
       sources = double('pull sources')
       subject.stub(:map_config_to_pull_sources).and_return(sources)
       subject.pull_sources.should eq(sources)
@@ -89,19 +80,27 @@ describe Pra::PullRequestService do
   end
 
   describe "#map_config_to_pull_sources" do
+    it "gets the users config" do
+      config = double('config', pull_sources: [])
+      Pra.should_receive(:config).and_return(config)
+      subject.map_config_to_pull_sources
+    end
+
     it "gets the pull sources from the config" do
       config = double('config')
+      Pra.stub(:config).and_return(config)
       config.should_receive(:pull_sources).and_return([])
-      subject.map_config_to_pull_sources(config)
+      subject.map_config_to_pull_sources
     end
 
     it "creates a PullSource based object for each configured pull source" do
       pull_source_config_one = double('pull source config one')
       pull_source_config_two = double('pull source config two')
       config = double('config', pull_sources: [pull_source_config_one, pull_source_config_two])
+      Pra.stub(:config).and_return(config)
       Pra::PullSourceFactory.should_receive(:build_pull_source).with(pull_source_config_one)
       Pra::PullSourceFactory.should_receive(:build_pull_source).with(pull_source_config_two)
-      subject.map_config_to_pull_sources(config)
+      subject.map_config_to_pull_sources
     end
 
     it "returns an array of the constructed PullSource based objects" do
@@ -110,9 +109,10 @@ describe Pra::PullRequestService do
       pull_source_config_one = double('pull source config one')
       pull_source_config_two = double('pull source config two')
       config = double('config', pull_sources: [pull_source_config_one, pull_source_config_two])
+      Pra.stub(:config).and_return(config)
       Pra::PullSourceFactory.stub(:build_pull_source).with(pull_source_config_one).and_return(pull_source_one)
       Pra::PullSourceFactory.stub(:build_pull_source).with(pull_source_config_two).and_return(pull_source_two)
-      subject.map_config_to_pull_sources(config).should eq([pull_source_one, pull_source_two])
+      subject.map_config_to_pull_sources.should eq([pull_source_one, pull_source_two])
     end
   end
 end

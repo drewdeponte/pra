@@ -48,8 +48,7 @@ module Pra
     end
 
     def assignee_blacklist
-      config = Pra::Config.load_config
-      config.assignee_blacklist
+      Pra.config.assignee_blacklist
     end
 
     def present(columns)
