@@ -2,7 +2,7 @@ require 'thread'
 
 require 'pra/window_system_factory'
 require 'pra/pull_request_service'
-require 'pra/error_log'
+require 'pra/log'
 
 Thread.abort_on_exception=true
 
@@ -33,7 +33,7 @@ module Pra
           end
 
           fetch.on_error do |error|
-            Pra::ErrorLog.log(error)
+            Pra::Log.error(error)
             @window_system.fetch_failed
           end
         end

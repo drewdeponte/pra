@@ -51,7 +51,7 @@ describe Pra::App do
         and_yield(success_status_one).
         and_yield(error_status).
         and_yield(success_status_two)
-      allow(Pra::ErrorLog).to receive(:log)
+      allow(Pra::Log).to receive(:error)
       subject.instance_variable_set(:@window_system, window_system_double)
     end
 
@@ -76,7 +76,7 @@ describe Pra::App do
     end
 
     it "logs the errors for pull sources that could not be fetched" do
-      expect(Pra::ErrorLog).to receive(:log).with(error)
+      expect(Pra::Log).to receive(:error).with(error)
       subject.fetch_and_refresh_pull_requests
     end
 

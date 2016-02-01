@@ -55,7 +55,7 @@ module Pra
     end
 
     def fetch_failed
-      output_string(4, 0, "Failed to fetch pull requests on 1 or more pull sources. Check #{Pra::Config.error_log_path} for details.")
+      output_string(4, 0, "Failed to fetch pull requests on 1 or more pull sources. Check #{Pra::Config.log_path} for details.")
     end
 
     def refresh_pull_requests(pull_requests)
