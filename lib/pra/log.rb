@@ -29,7 +29,7 @@ module Pra
     
     def self.error(message)
       logger.error(message)
-      if message.responds_to?(:backtrace)
+      if message.respond_to?(:backtrace)
         message.backtrace.each { |line| logger.error(line) }
       end
     end
