@@ -111,7 +111,7 @@ module Pra
     end
 
     def output_highlighted_string(row, col, str)
-      Curses.attron(Curses.color_pair(Curses::COLOR_CYAN)|Curses::A_NORMAL) {
+      Curses.attron(Curses::A_REVERSE) {
         output_string(row, col, str)
       }
     end
