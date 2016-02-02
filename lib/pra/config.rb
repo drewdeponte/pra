@@ -55,5 +55,9 @@ module Pra
     def assignee_blacklist
       Array(@initial_config["assignee_blacklist"])
     end
+    
+    def refresh_interval
+      @initial_config["refresh_interval"] || 60*5
+    end
   end
 end
