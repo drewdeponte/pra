@@ -26,6 +26,7 @@ module Pra
       resp = conn.get do |req|
         req.url rest_api_search_issues_url
         req.params['q'] = "is:pr is:open sort:updated-desc #{repos_for_query}"
+        req.params['per_page'] = '300'
         req.headers['Content-Type'] = 'application/json'
         req.headers['Accept'] = 'application/json'
       end
