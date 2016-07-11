@@ -11,9 +11,10 @@ module Pra
 
     def initialize
       @selected_pull_request_index = 0
+      @current_page = 1
       @current_pull_requests = []
       @previous_number_of_pull_requests = 0
-      @last_updated = nil 
+      @last_updated = nil
       @state_lock = Mutex.new
       @last_updated_access_lock = Mutex.new
       @force_update = true
@@ -84,6 +85,10 @@ module Pra
           @state_lock.synchronize {
             Launchy.open(@current_pull_requests[@selected_pull_request_index].link)
           }
+        when 'n'
+          load_next_page
+        when 'p'
+          load_prev_page
         end
         c = Curses.getch()
       end
@@ -118,7 +123,7 @@ module Pra
 
     def display_instructions
       output_string(0, 0, "Pra: Helping you own pull requests")
-      output_string(1, 0, "quit: q, up: k|#{"\u25B2".encode("UTF-8")}, down: j|#{"\u25BC".encode("UTF-8")}, open: o|#{"\u21A9".encode("UTF-8")}, refresh: r")
+      output_string(1, 0, "quit: q, up: k|#{"\u25B2".encode("UTF-8")}, down: j|#{"\u25BC".encode("UTF-8")}, open: o|#{"\u21A9".encode("UTF-8")}, refresh: r, next page: n, prev page: p")
     end
 
     def move_selection_up
@@ -131,10 +136,15 @@ module Pra
 
     def move_selection_down
       @state_lock.synchronize {
-        if @selected_pull_request_index < @current_pull_requests.length-1
+        if ((@current_page - 1) * pull_requests_per_page + @selected_pull_request_index) < @current_pull_requests.length-1 &&
+          (selected_pull_request_loc + 1) < Curses.lines
           @selected_pull_request_index += 1
         end
       }
+    end
+
+    def selected_pull_request_loc
+      LIST_START_LINE + @selected_pull_request_index
     end
 
     HEADER_LINE = 6
@@ -152,7 +162,7 @@ module Pra
     end
 
     def header_width
-      @header_width ||= columns.reduce(0) do |t,c| 
+      @header_width ||= columns.reduce(0) do |t,c|
         c[:size] + c[:padding] + t
       end
     end
@@ -168,17 +178,50 @@ module Pra
       header
     end
 
+    def load_next_page
+      if @current_page + 1 <= pull_request_pages
+        @current_page += 1
+        clear_pull_requests
+        @selected_pull_request_index = 0
+        draw_current_pull_requests
+      end
+    end
+
+    def load_prev_page
+      if @current_page - 1 > 0
+        @current_page -= 1
+        clear_pull_requests
+        @selected_pull_request_index = 0
+        draw_current_pull_requests
+      end
+    end
+
+    def pull_requests_per_page
+      Curses.lines - LIST_START_LINE
+    end
+
+    def pull_request_pages
+      (@current_pull_requests.length.to_f/pull_requests_per_page).ceil
+    end
+
+    def clear_pull_requests
+      (LIST_START_LINE..Curses.lines).each do |i|
+        Curses.setpos(i, 0)
+        Curses.clrtoeol
+      end
+      Curses.refresh
+    end
+
     def draw_current_pull_requests
       @state_lock.synchronize {
-        output_string(3, 0, "#{@current_pull_requests.length} Pull Requests @ #{@last_updated}")
+        output_string(3, 0, "#{@current_pull_requests.length} Pull Requests @ #{@last_updated} : Page #{@current_page} of #{pull_request_pages}")
         output_string(HEADER_LINE, 0, headers)
         output_string(HEADER_LINE + 1, 0, "-" * header_width)
 
         # clear lines that should no longer exist
         if @previous_number_of_pull_requests > @current_pull_requests.length
           start_line_of_left_overs = LIST_START_LINE+@current_pull_requests.length
-          last_line_of_left_overs = LIST_START_LINE+@previous_number_of_pull_requests + 1
-          (start_line_of_left_overs..last_line_of_left_overs).each do |i|
+          (start_line_of_left_overs..Curses.lines).each do |i|
             Curses.setpos(i, 0)
             Curses.clrtoeol
           end
@@ -186,7 +229,7 @@ module Pra
         end
 
         # go through and redraw all the pull requests
-        @current_pull_requests.each_with_index do |pull_request, index|
+        @current_pull_requests[(@current_page-1)*pull_requests_per_page..@current_page*pull_requests_per_page-1].each_with_index do |pull_request, index|
           pull_request_presenter = Pra::CursesPullRequestPresenter.new(pull_request)
           if index == @selected_pull_request_index
             output_highlighted_string(LIST_START_LINE + index, 0, pull_request_presenter.present(columns))
