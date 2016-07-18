@@ -13,7 +13,7 @@ describe Pra::Config do
     subject { Pra::Config }
 
     it "parses the config file" do
-      subject.should_receive(:parse_config_file)
+      subject.should_receive(:parse_config_file).and_return({})
       subject.load_config
     end
 
@@ -93,21 +93,13 @@ describe Pra::Config do
     end
   end
 
-  describe ".error_log_path" do
-    subject { Pra::Config }
-
-    it "returns the joined users home directory and .pra.error.log to create the path" do
-      allow(subject).to receive(:users_home_directory).and_return('/home/someuser')
-      expect(subject.error_log_path).to eq('/home/someuser/.pra.errors.log')
-    end
-  end
-
   describe ".log_path" do
     subject { Pra::Config }
 
     it "returns the joined users home directory and .pra.log to create the path" do
-      allow(subject).to receive(:users_home_directory).and_return('/home/someuser')
-      expect(subject.log_path).to eq('/home/someuser/.pra.log')
+      allow(Dir).to receive(:exists?).and_return(true)
+      allow(ENV).to receive(:[]).with("HOME").and_return('/home/someuser')
+      expect(subject.log_path).to eq('/home/someuser/.pra/logs/.pra.log')
     end
   end
 
