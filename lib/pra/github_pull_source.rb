@@ -17,10 +17,8 @@ module Pra
       return get_all_pull_requests
     end
 
-    def get_all_pull_requests
-      pull_requests = []
+    def fetch_pull_requests
       pull_requests_json = "[]"
-
       conn = Faraday.new
       conn.basic_auth(@config['username'], @config['password'])
       resp = conn.get do |req|
@@ -34,13 +32,19 @@ module Pra
       @ratelimit_reset = Time.at(resp.headers['x-ratelimit-reset'].to_i)
       @ratelimit_limit = resp.headers['x-ratelimit-limit'].to_i
       @ratelimit_remaining = resp.headers['x-ratelimit-remaining'].to_i
-      Pra::Log.info("fetched pull requests and updated ratelimit tracking")
-      Pra::Log.info("Ratelimit Reset: #{@ratelimit_reset}")
-      Pra::Log.info("Ratelimit Limit: #{@ratelimit_limit}")
-      Pra::Log.info("Ratelimit Remaining: #{@ratelimit_remaining}")
+      Pra::Log.debug("Fetched pull requests and updated ratelimit tracking")
+      Pra::Log.debug("Ratelimit Reset: #{@ratelimit_reset}")
+      Pra::Log.debug("Ratelimit Limit: #{@ratelimit_limit}")
+      Pra::Log.debug("Ratelimit Remaining: #{@ratelimit_remaining}")
       pull_requests_json = resp.body
       Pra::Log.debug(pull_requests_json)
-      pull_requests_hash = JSON.parse(pull_requests_json)
+      JSON.parse(pull_requests_json)
+    end
+
+    def get_all_pull_requests
+      pull_requests = []
+
+      pull_requests_hash = fetch_pull_requests
       pull_requests_hash['items'].each do |request|
         begin
           org, repository = extract_repository_from_html_url(request['html_url'])
@@ -65,12 +69,12 @@ module Pra
     end
 
     def repos_for_query
-      query_params = [] 
+      query_params = []
       repositories.each do |repo|
         query_params << "repo:#{repo['owner']}/#{repo['repository']}"
       end
 
-      @excluded_repos = {} 
+      @excluded_repos = {}
       organizations.each do |org|
         query_params << "org:#{org['name']}"
         @excluded_repos[org['name'].downcase] = org['exclude']
@@ -110,72 +114,6 @@ module Pra
 
     def organizations
       @config["organizations"] || []
-    end
-
-    def get_repo_pull_requests(repository_config)
-      requests = []
-      Pra::Log.info("get_repo_pull_requests - #{repository_config.inspect}")
-      JSON.parse(rest_api_pull_request_resource(repository_config)).each do |request|
-        begin
-          requests << Pra::PullRequest.new(title: request["title"], from_reference: request["head"]["label"], to_reference: request["base"]["label"], author: request["user"]["login"], assignee: request["assignee"] ? request["assignee"]["login"] : nil, link: request['html_url'], service_id: 'github', repository: repository_config["repository"])
-        rescue StandardError => e
-          Pra::Log.error("Error: #{e.to_s}")
-          Pra::Log.error("Request: #{request.inspect}")
-        end
-      end
-      return requests
-    end
-
-    def rest_api_pull_request_url(repository_config)
-      "#{@config['protocol']}://#{@config['host']}/repos/#{repository_config["owner"]}/#{repository_config["repository"]}/pulls"
-    end
-
-    def rest_api_pull_request_resource(repository_config)
-      pull_requests_json = "[]"
-      if @ratelimit_remaining > 0
-        Pra::Log.info("rest_api_pull_request_resource - fetching pull requests")
-        conn = Faraday.new
-        conn.basic_auth(@config['username'], @config['password'])
-        resp = conn.get do |req|
-          req.url rest_api_pull_request_url(repository_config)
-          req.headers['Content-Type'] = 'application/json'
-          req.headers['Accept'] = 'application/json'
-        end
-
-        @ratelimit_reset = Time.at(resp.headers['x-ratelimit-reset'].to_i)
-        @ratelimit_limit = resp.headers['x-ratelimit-limit'].to_i
-        @ratelimit_remaining = resp.headers['x-ratelimit-remaining'].to_i
-        Pra::Log.info("fetched pull requests and updated ratelimit tracking")
-        Pra::Log.info("Ratelimit Reset: #{@ratelimit_reset}")
-        Pra::Log.info("Ratelimit Limit: #{@ratelimit_limit}")
-        Pra::Log.info("Ratelimit Remaining: #{@ratelimit_remaining}")
-        pull_requests_json = resp.body
-      elsif Time.now.utc > @ratelimit_reset
-        Pra::Log.info("rest_api_pull_request_resource - fetching pull requests")
-        conn = Faraday.new
-        conn.basic_auth(@config['username'], @config['password'])
-        resp = conn.get do |req|
-          req.url rest_api_pull_request_url(repository_config)
-          req.headers['Content-Type'] = 'application/json'
-          req.headers['Accept'] = 'application/json'
-        end
-
-        @ratelimit_reset = Time.at(resp.headers['x-ratelimit-reset'].to_i)
-        @ratelimit_limit = resp.headers['x-ratelimit-limit'].to_i
-        @ratelimit_remaining = resp.headers['x-ratelimit-remaining'].to_i
-        Pra::Log.info("fetched pull requests and updated ratelimit tracking")
-        Pra::Log.info("Ratelimit Reset: #{@ratelimit_reset}")
-        Pra::Log.info("Ratelimit Limit: #{@ratelimit_limit}")
-        Pra::Log.info("Ratelimit Remaining: #{@ratelimit_remaining}")
-        pull_requests_json = resp.body
-      else
-        Pra::Log.info("Skipping request because of ratelimit")
-        Pra::Log.info("Ratelimit Reset: #{@ratelimit_reset}")
-        Pra::Log.info("Ratelimit Limit: #{@ratelimit_limit}")
-        Pra::Log.info("Ratelimit Remaining: #{@ratelimit_remaining}")
-      end
-
-      return pull_requests_json
     end
   end
 end

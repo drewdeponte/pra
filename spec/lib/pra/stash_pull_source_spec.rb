@@ -3,7 +3,7 @@ require_relative "../../../lib/pra/stash_pull_source"
 describe Pra::StashPullSource do
   describe "#pull_requests" do
     it "gets all the repositories" do
-      subject.should_receive(:repositories).and_return([])
+      expect(subject).to receive(:repositories).and_return([])
       subject.pull_requests
     end
 
@@ -18,7 +18,7 @@ describe Pra::StashPullSource do
         ]
       }
       pull_source = Pra::StashPullSource.new(config)
-      pull_source.should_receive(:get_repo_pull_requests).with({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).and_return([])
+      expect(pull_source).to receive(:get_repo_pull_requests).with({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).and_return([])
       pull_source.pull_requests
     end
 
@@ -36,9 +36,9 @@ describe Pra::StashPullSource do
       pull_request_one = double('pull request one')
       pull_request_two = double('pull request two')
       pull_source = Pra::StashPullSource.new(config)
-      pull_source.stub(:get_repo_pull_requests).with({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).and_return([pull_request_one])
-      pull_source.stub(:get_repo_pull_requests).with({ "project_slug" => "CAP", "repository_slug" => "capture_crawler_api" }).and_return([pull_request_two])
-      pull_source.pull_requests.should eq([pull_request_one, pull_request_two])
+      allow(pull_source).to receive(:get_repo_pull_requests).with({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).and_return([pull_request_one])
+      allow(pull_source).to receive(:get_repo_pull_requests).with({ "project_slug" => "CAP", "repository_slug" => "capture_crawler_api" }).and_return([pull_request_two])
+      expect(pull_source.pull_requests).to eq([pull_request_one, pull_request_two])
     end
   end
 
@@ -54,7 +54,7 @@ describe Pra::StashPullSource do
         ]
       }
       pull_source = Pra::StashPullSource.new(config)
-      pull_source.repositories.should eq([{ "project_slug" => "CAP", "repository_slug" => "capture_api" }])
+      expect(pull_source.repositories).to eq([{ "project_slug" => "CAP", "repository_slug" => "capture_api" }])
     end
   end
   
@@ -70,7 +70,7 @@ describe Pra::StashPullSource do
         ]
       }
       pull_source = Pra::StashPullSource.new(config)
-      pull_source.stub(:rest_api_pull_request_resource).with({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).and_return('{ "values": [] }')
+      expect(pull_source).to receive(:rest_api_pull_request_resource).with({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).and_return('{ "values": [] }')
       pull_source.get_repo_pull_requests({ "project_slug" => "CAP", "repository_slug" => "capture_api" })
     end
   end
@@ -110,7 +110,7 @@ describe Pra::StashPullSource do
       
       it "returns the project pull request url compiled from the config options" do
         pull_source = Pra::StashPullSource.new(config)
-        pull_source.rest_api_pull_request_url({ "project_slug" => "CAP", "repository_slug" => "capture_api" }).should eq("https://my.stash.instance/rest/api/1.0/projects/CAP/repos/capture_api/pull-requests")
+        expect(pull_source.rest_api_pull_request_url({ "project_slug" => "CAP", "repository_slug" => "capture_api" })).to eq("https://my.stash.instance/rest/api/1.0/projects/CAP/repos/capture_api/pull-requests")
       end
     end
   end

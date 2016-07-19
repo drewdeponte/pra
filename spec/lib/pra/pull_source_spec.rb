@@ -5,7 +5,7 @@ describe Pra::PullSource do
     it "assigns the given config hash to an instance variable" do
       config = double('config hash')
       pull_source = Pra::PullSource.new(config)
-      pull_source.instance_variable_get(:@config).should eq(config)
+      expect(pull_source.instance_variable_get(:@config)).to eq(config)
     end
   end
 
