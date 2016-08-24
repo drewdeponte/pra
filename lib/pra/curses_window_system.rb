@@ -10,7 +10,7 @@ module Pra
     ENTER_KEY = 10
 
     def initialize
-      @selected_pull_request_index = 0
+      @selected_pull_request_page_index = 0
       @current_page = 1
       @current_pull_requests = []
       @previous_number_of_pull_requests = 0
@@ -83,7 +83,7 @@ module Pra
           @force_update = true
         when 'o', ENTER_KEY
           @state_lock.synchronize {
-            Launchy.open(@current_pull_requests[@selected_pull_request_index].link)
+            Launchy.open(@current_pull_requests[selected_pull_request_loc].link)
           }
         when 'n'
           load_next_page
@@ -128,23 +128,23 @@ module Pra
 
     def move_selection_up
       @state_lock.synchronize {
-        if @selected_pull_request_index > 0
-          @selected_pull_request_index -= 1
+        if @selected_pull_request_page_index > 0
+          @selected_pull_request_page_index -= 1
         end
       }
     end
 
     def move_selection_down
       @state_lock.synchronize {
-        if ((@current_page - 1) * pull_requests_per_page + @selected_pull_request_index) < @current_pull_requests.length-1 &&
-          (selected_pull_request_loc + 1) < Curses.lines
-          @selected_pull_request_index += 1
+        if selected_pull_request_loc < @current_pull_requests.length - 1 &&
+          (LIST_START_LINE + @selected_pull_request_page_index + 1) < Curses.lines
+          @selected_pull_request_page_index += 1
         end
       }
     end
 
     def selected_pull_request_loc
-      LIST_START_LINE + @selected_pull_request_index
+      (@current_page - 1) * pull_requests_per_page + @selected_pull_request_page_index
     end
 
     HEADER_LINE = 6
@@ -182,7 +182,7 @@ module Pra
       if @current_page + 1 <= pull_request_pages
         @current_page += 1
         clear_pull_requests
-        @selected_pull_request_index = 0
+        @selected_pull_request_page_index = 0
         draw_current_pull_requests
       end
     end
@@ -191,7 +191,7 @@ module Pra
       if @current_page - 1 > 0
         @current_page -= 1
         clear_pull_requests
-        @selected_pull_request_index = 0
+        @selected_pull_request_page_index = 0
         draw_current_pull_requests
       end
     end
@@ -231,7 +231,7 @@ module Pra
         # go through and redraw all the pull requests
         @current_pull_requests[(@current_page-1)*pull_requests_per_page..@current_page*pull_requests_per_page-1].each_with_index do |pull_request, index|
           pull_request_presenter = Pra::CursesPullRequestPresenter.new(pull_request)
-          if index == @selected_pull_request_index
+          if index == @selected_pull_request_page_index
             output_highlighted_string(LIST_START_LINE + index, 0, pull_request_presenter.present(columns))
           else
             output_string(LIST_START_LINE + index, 0, pull_request_presenter.present(columns))
