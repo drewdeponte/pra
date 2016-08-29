@@ -1,9 +1,13 @@
 require 'json'
+require 'fileutils'
 
 module Pra
   class Config
     def initialize(initial_config = {})
       @initial_config = initial_config
+      if @initial_config["log_level"]
+        Pra::Log.level(@initial_config["log_level"])
+      end
     end
 
     def self.load_config
@@ -22,15 +26,18 @@ module Pra
     end
 
     def self.config_path
-      return File.join(self.users_home_directory, '.pra.json')
-    end
-
-    def self.error_log_path
-      return File.join(self.users_home_directory, '.pra.errors.log')
+      if File.exists?(File.join(self.users_home_directory, '.pra', 'config.json'))
+        return File.join(self.users_home_directory, '.pra', 'config.json')
+      else
+        return File.join(self.users_home_directory, '.pra.json')
+      end
     end
 
     def self.log_path
-      return File.join(self.users_home_directory, '.pra.log')
+      unless Dir.exists?(File.join(self.users_home_directory, '.pra', 'logs'))
+        FileUtils.mkdir_p(File.join(self.users_home_directory, '.pra', 'logs'))
+      end
+      return File.join(self.users_home_directory, '.pra', 'logs', '.pra.log')
     end
 
     def self.users_home_directory
@@ -47,6 +54,10 @@ module Pra
 
     def assignee_blacklist
       Array(@initial_config["assignee_blacklist"])
+    end
+    
+    def refresh_interval
+      @initial_config["refresh_interval"] || 60*5
     end
   end
 end

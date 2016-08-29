@@ -2,7 +2,7 @@ require 'thread'
 
 require 'pra/window_system_factory'
 require 'pra/pull_request_service'
-require 'pra/error_log'
+require 'pra/log'
 
 Thread.abort_on_exception=true
 
@@ -22,6 +22,15 @@ module Pra
     end
 
     def fetch_and_refresh_pull_requests
+      if @window_system.force_refresh || Time.now - @window_system.last_updated > Pra.config.refresh_interval
+        refresh_pull_requests
+      end
+
+      Kernel.sleep(0.1)
+    end
+
+    def refresh_pull_requests
+      @window_system.force_refresh = false
       @window_system.fetching_pull_requests
       new_pull_requests = []
 
@@ -31,14 +40,12 @@ module Pra
         end
 
         fetch.on_error do |error|
-          Pra::ErrorLog.log(error)
+          Pra::Log.error(error)
           @window_system.fetch_failed
         end
       end
 
       @window_system.refresh_pull_requests(new_pull_requests)
-      
-      Kernel.sleep(5 * 60)
     end
 
     def pull_request_fetcher_thread

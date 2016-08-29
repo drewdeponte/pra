@@ -1,4 +1,5 @@
 require 'pra/config'
+require 'time-lord'
 
 module Pra
   class CursesPullRequestPresenter
@@ -7,37 +8,56 @@ module Pra
     end
 
     def repository
-      force_length(@pull_request.repository, 15)
+      @pull_request.repository
     end
 
     def title
-      force_length(@pull_request.title, 20)
+      @pull_request.title
     end
 
     def from_reference
-      force_length(@pull_request.from_reference, 20)
+      @pull_request.from_reference
     end
 
     def to_reference
-      force_length(@pull_request.to_reference, 20)
+      @pull_request.to_reference
     end
 
     def author
-      force_length(@pull_request.author, 20)
+      @pull_request.author
     end
 
     def assignee
-      return force_length('', 20) if @pull_request.assignee.nil? || blacklisted?(@pull_request.assignee)
-      force_length(@pull_request.assignee, 20)
+      if @pull_request.assignee.nil? || blacklisted?(@pull_request.assignee)
+        return ""
+      else
+        @pull_request.assignee
+      end
     end
 
     def service_id
-      force_length(@pull_request.service_id, 10)
+      @pull_request.service_id
+    end
+
+    def labels
+      @pull_request.labels
+    end
+
+    def updated_at
+      @pull_request.updated_at.to_time.ago.to_words
     end
 
     def assignee_blacklist
-      config = Pra::Config.load_config
-      config.assignee_blacklist
+      Pra.config.assignee_blacklist
+    end
+
+    def present(columns)
+      row = ""
+      columns.each do |column|
+        row << force_length(send(column[:name]), column[:size])
+        row << (" " * column[:padding])
+      end
+      row
     end
 
     private

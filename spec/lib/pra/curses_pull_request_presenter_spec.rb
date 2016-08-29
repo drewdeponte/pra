@@ -28,91 +28,56 @@ describe Pra::CursesPullRequestPresenter do
     end
   end
 
-  describe '#repository' do
-    it 'forces the repository length to 15' do
-      repository = double
-      curses_pull_request = Pra::CursesPullRequestPresenter.new(double('pull request', repository: repository))
-      expect(curses_pull_request).to receive(:force_length).with(repository, 15)
-      curses_pull_request.repository
-    end
-  end
-
-  describe '#title' do
-    it 'forces the title length to 20' do
-      title = double
-      curses_pull_request = Pra::CursesPullRequestPresenter.new(double('pull request', title: title))
-      expect(curses_pull_request).to receive(:force_length).with(title, 20)
-      curses_pull_request.title
-    end
-  end
-
-  describe '#from_reference' do
-    it 'forces the from_reference length to 20' do
-      from_reference = double
-      curses_pull_request = Pra::CursesPullRequestPresenter.new(double('pull request', from_reference: from_reference))
-      expect(curses_pull_request).to receive(:force_length).with(from_reference, 20)
-      curses_pull_request.from_reference
-    end
-  end
-
-  describe '#to_reference' do
-    it 'forces the to_reference length to 20' do
-      to_reference = double
-      curses_pull_request = Pra::CursesPullRequestPresenter.new(double('pull request', to_reference: to_reference))
-      expect(curses_pull_request).to receive(:force_length).with(to_reference, 20)
-      curses_pull_request.to_reference
-    end
-  end
-
-  describe '#author' do
-    it 'forces the author length to 20' do
-      author = double
-      curses_pull_request = Pra::CursesPullRequestPresenter.new(double('pull request', author: author))
-      expect(curses_pull_request).to receive(:force_length).with(author, 20)
-      curses_pull_request.author
-    end
-  end
-
   describe '#assignee' do
     context 'when assignee is nil' do
-      it 'returns an empty string with length of 20' do
+      it 'returns an empty string' do
         curses_pull_request = Pra::CursesPullRequestPresenter.new(double('pull_request', assignee: nil))
-        expect(curses_pull_request.assignee).to eq(' '*20)
+        expect(curses_pull_request.assignee).to eq('')
       end
     end
 
     context 'when assignee is NOT nil' do
       context 'when assignee is blacklisted' do
-        it 'returns an empty string with length of 20' do
+        it 'returns an empty string' do
           curses_pull_request = Pra::CursesPullRequestPresenter.new(double('pull_request', assignee: nil))
-          expect(curses_pull_request.assignee).to eq(' '*20)
+          expect(curses_pull_request.assignee).to eq('')
         end
       end
     end
 
     context 'when assignee is NOT blacklisted' do
-      it 'returns assignee with a length of 20' do
+      it 'returns assignee' do
         curses_pull_request = Pra::CursesPullRequestPresenter.new(double('pull_request', assignee: 'IPT-Capture'))
         allow(curses_pull_request).to receive(:assignee_blacklist).and_return(['IPT'])
-        expect(curses_pull_request.assignee).to eq('IPT-Capture         ')
+        expect(curses_pull_request.assignee).to eq('IPT-Capture')
       end
     end
 
     context 'when assignee IS blacklisted' do
-      it 'returns an empty string with length of 20' do
+      it 'returns an empty string' do
         curses_pull_request = Pra::CursesPullRequestPresenter.new(double('pull_request', assignee: 'IPT-Capture'))
         allow(curses_pull_request).to receive(:assignee_blacklist).and_return(['IPT-Capture'])
-        expect(curses_pull_request.assignee).to eq(' '*20)
+        expect(curses_pull_request.assignee).to eq('')
       end
     end
   end
 
-  describe '#service_id' do
-    it 'forces the service_id length to 20' do
-      service_id = double
-      curses_pull_request = Pra::CursesPullRequestPresenter.new(double('pull request', service_id: service_id))
-      expect(curses_pull_request).to receive(:force_length).with(service_id, 10)
-      curses_pull_request.service_id
+  describe '#present' do
+    it 'returns a string representing the pull request for curses from column format' do
+      pull_request = double('pull request', repository: 'some repo',
+                            title: 'some title', author: 'some author',
+                            assignee: 'some assignee', labels: 'some labels',
+                            service_id: 'some service id')
+      columns = [
+        { name: :repository, size: 28, padding: 2 },
+        { name: :title, size: 45, padding: 2 },
+        { name: :author, size: 14, padding: 2 },
+        { name: :assignee, size: 14, padding: 2 },
+        { name: :labels, size: 12, padding: 2 }
+      ]
+      presenter = Pra::CursesPullRequestPresenter.new(pull_request)
+      allow(presenter).to receive(:assignee_blacklist).and_return(['IPT'])
+      expect(presenter.present(columns)).to eq("some repo                     some title                                     some author     some assignee   some labels   ")
     end
   end
 

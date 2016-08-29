@@ -1,4 +1,4 @@
-require 'pra/config'
+require 'pra'
 require 'pra/pull_source_factory'
 require 'pra/pull_request_service/fetch_status'
 
@@ -18,13 +18,12 @@ module Pra
     end
 
     def self.pull_sources
-      config = Pra::Config.load_config
-      return map_config_to_pull_sources(config)
+      return map_config_to_pull_sources
     end
 
-    def self.map_config_to_pull_sources(config)
+    def self.map_config_to_pull_sources
       sources = []
-      config.pull_sources.each do |pull_source_config|
+      Pra.config.pull_sources.each do |pull_source_config|
         sources << Pra::PullSourceFactory.build_pull_source(pull_source_config)
       end
       return sources

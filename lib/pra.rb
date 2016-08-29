@@ -1,5 +1,7 @@
 require "pra/version"
 
 module Pra
-  # Your code goes here...
+  def self.config
+    @config ||= Pra::Config.load_config
+  end
 end
