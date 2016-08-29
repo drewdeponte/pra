@@ -5,6 +5,14 @@ This is inteded to help keep people informed about notable changes between
 versions as well as provide a rough history.
 
 #### Next Release
+* Added ability to refresh pull requests
+* Added pagination when there are more pull requests than can be displayed
+* Added support for github organizations
+* Added last refresh time to UI
+* Redesgined pull request render process to make format changes easier
+* Added github labels
+* Changed github query method to reduce API calls and support organizations
+* Added github rate limiting protection
 
 #### v1.7.2
 

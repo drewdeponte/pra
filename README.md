@@ -13,13 +13,21 @@ You can easily install `pra` with the following command:
 
     $ gem install pra
 
+## Migrating to 2.0
+
+The configuration location has moved from `~/.pra.json` to
+`~/.pra/config.json`. The current version of pra reads from both locations but
+it is preferred to move your configuration file to the `.pra` folder. This
+folder will automatically be created, if it does not exist, for logging
+purposes when pra starts.
+
 ## Configuration
 
 `pra` requires one configuration, `~/.pra.json`, to exist in your home
 directory. The following is an example config that can be used as a starter.
 *Note:* You will need to replace **your.username**, **your.password**,
-**your.stash.server**, and the **repositories** sections of each of the pull
-sources.
+**your.stash.server**, and the **repositories** and **organizations** sections
+of each of the pull sources.
 
     {
       "pull_sources": [
@@ -47,6 +55,9 @@ sources.
             "repositories": [
               { "owner": "reachlocal", "repository": "snapdragon" },
               { "owner": "brewster", "repository": "cequel" }
+            ],
+            "organizations": [
+              { "name": "codebreakdown", "exclude": ["snapdragon"]}
             ]
           }
         }
@@ -55,13 +66,15 @@ sources.
         "IPT-Capture",
         "IPT-Core Services"
       ],
-      "refresh_interval": 300
+      "refresh_interval": 300,
+      "log_level": "info"
     }
 
-I suggest copying and pasting the above starter file into your `~/.pra.json`
+I suggest copying and pasting the above starter file into your `~/.pra/config.json`
 file to get you started. Then simply replace the appropriate fields and the
-**repositories** sections for all the pull sources with the repository
+**repositories** and **organizations** sections for all the pull sources with the repository
 information for the repositories you want to watch for open pull requests.
+
 
 #### Stash User & Project Repositories
 
@@ -81,6 +94,13 @@ scenarios where the repository is housed under a project.
 
 Reduces noise to more easily determine which pull requests are unassigned. Names
 added will not appear in the assignee column.
+
+#### Github Organizations
+
+Instead of listing each repository, an organization can be provided and all
+pull requests open for projects in that organization will be listed. To
+exclude any unwanted projects, add the repository name to the `exclude` array
+for that organization.
 
 ### GitHub Authentication
 
@@ -120,9 +140,10 @@ running the following command:
 
     pra
 
-Once it launches, it will use the information provided in the `~/.pra.json`
-configuration file to fetch all the open pull requests and display them. Once,
-the pull requests are displayed you can perorm any of the following actions.
+Once it launches, it will use the information provided in the
+`~/.pra/config.json` configuration file to fetch all the open pull requests
+and display them. Once, the pull requests are displayed you can perform any of
+the following actions.
 
 ### Move Selection Up
 
@@ -136,6 +157,15 @@ To move the selection down simply press either the `j` or `down arrow` key.
 
 If you would like to open the currently selected pull request in your default
 browser you can press either the `o` or `enter` key.
+
+### Refresh
+
+To force a refresh press the `r` key.
+
+### Move Between Pages
+
+To move between pages press `n` to go to the next page, and `p` to go to the
+previous page.
 
 ### Quit
 
