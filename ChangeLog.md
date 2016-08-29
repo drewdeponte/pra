@@ -5,6 +5,8 @@ This is inteded to help keep people informed about notable changes between
 versions as well as provide a rough history.
 
 #### Next Release
+
+#### v2.0.0
 * Added ability to refresh pull requests
 * Added pagination when there are more pull requests than can be displayed
 * Added support for github organizations
