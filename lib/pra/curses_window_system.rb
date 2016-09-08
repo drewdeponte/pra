@@ -221,7 +221,6 @@ module Pra
         columns.any? do |col|
           presenter = Pra::CursesPullRequestPresenter.new(pr)
           pr_attr_value = presenter.send(col[:name])
-          next if pr_attr_value.nil?
           if input_string == input_string.downcase
             pr_attr_value.to_s.downcase.include?(input_string)
           else
