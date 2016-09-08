@@ -91,9 +91,8 @@ module Pra
           load_prev_page
         when '/'
           c_str = Curses.getstr()
-          filter_current_pull_requests(c_str)
           clear_pull_requests
-          draw_current_pull_requests
+          filter_current_pull_requests(c_str)
         end
         c = Curses.getch()
       end
@@ -128,7 +127,7 @@ module Pra
 
     def display_instructions
       output_string(0, 0, "Pra: Helping you own pull requests")
-      output_string(1, 0, "quit: q, up: k|#{"\u25B2".encode("UTF-8")}, down: j|#{"\u25BC".encode("UTF-8")}, open: o|#{"\u21A9".encode("UTF-8")}, refresh: r, next page: n, prev page: p, search: /")
+      output_string(1, 0, "quit: q, up: k|#{"\u25B2".encode("UTF-8")}, down: j|#{"\u25BC".encode("UTF-8")}, open: o|#{"\u21A9".encode("UTF-8")}, refresh: r, next page: n, prev page: p, filter: /")
     end
 
     def move_selection_up
@@ -231,11 +230,7 @@ module Pra
         end
       end
 
-      @previous_number_of_pull_requests = @current_pull_requests.length
-      @state_lock.synchronize {
-        @current_pull_requests = pull_reqs.dup
-        @last_updated = Time.now
-      }
+      refresh_pull_requests(pull_reqs)
     end
 
     def draw_current_pull_requests
