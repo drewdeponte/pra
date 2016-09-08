@@ -220,7 +220,8 @@ module Pra
     def filter_current_pull_requests(input_string)
       pull_reqs = @current_pull_requests.keep_if do |pr|
         columns.any? do |col|
-          pr_attr_value = pr.send(col[:name])
+          presenter = Pra::CursesPullRequestPresenter.new(pr)
+          pr_attr_value = presenter.send(col[:name])
           next if pr_attr_value.nil?
           if input_string == input_string.downcase
             pr_attr_value.to_s.downcase.include?(input_string)
