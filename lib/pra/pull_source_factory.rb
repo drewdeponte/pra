@@ -1,5 +1,6 @@
 require 'pra/stash_pull_source'
 require 'pra/github_pull_source'
+require 'pra/github_graphql_pull_source'
 
 module Pra
   module PullSourceFactory
@@ -14,6 +15,8 @@ module Pra
         return StashPullSource
       when 'github'
         return GithubPullSource
+      when 'github_graphql'
+        return GithubGraphQLPullSource
       end
     end
   end

@@ -23,9 +23,11 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.1"
   spec.add_development_dependency "rspec", "~> 3.5"
   spec.add_development_dependency "timecop", "~> 0.8"
+  spec.add_development_dependency "pry"
 
   spec.add_dependency "faraday", "~> 0.9"
   spec.add_dependency "launchy", "~> 2.4"
   spec.add_dependency "curses", "~> 1.0"
   spec.add_dependency "time-lord", "~> 1.0"
+  spec.add_dependency "graphql-client", "~> 0.1.0"
 end
