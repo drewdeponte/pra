@@ -8,6 +8,8 @@ require 'thread'
 module Pra
   class CursesWindowSystem < Pra::WindowSystem
     ENTER_KEY = 10
+    ESC_KEY = 27
+    BACKSPACE_KEY = 127
 
     def initialize
       @selected_pull_request_page_index = 0
@@ -19,6 +21,8 @@ module Pra
       @last_updated_access_lock = Mutex.new
       @force_update = true
       @force_update_access_lock = Mutex.new
+      @filter_mode = false
+      @filter_string = ""
     end
 
     def last_updated
@@ -72,23 +76,55 @@ module Pra
     def run_loop
       c = Curses.getch()
       while (c != 'q') do
-        case c
-        when 'j', Curses::Key::DOWN
-          move_selection_down
-          draw_current_pull_requests
-        when 'k', Curses::Key::UP
-          move_selection_up
-          draw_current_pull_requests
-        when 'r'
-          @force_update = true
-        when 'o', ENTER_KEY
-          @state_lock.synchronize {
-            Launchy.open(@current_pull_requests[selected_pull_request_loc].link)
-          }
-        when 'n'
-          load_next_page
-        when 'p'
-          load_prev_page
+        if @filter_mode
+          case c
+          when ESC_KEY
+            @filter_mode = false
+            @filter_string = ""
+            Curses.setpos(5, 0)
+            Curses.clrtoeol
+            @current_pull_requests = @original_pull_requests.dup
+            @original_pull_requests = nil
+            draw_current_pull_requests
+          when ENTER_KEY
+            @filter_mode = false
+            @filter_string = ""
+          when "\b", BACKSPACE_KEY, Curses::KEY_BACKSPACE
+            @filter_string.chop!
+            output_string(5, 0, "Filter: #{@filter_string}")
+            clear_pull_requests
+            filter_current_pull_requests(@filter_string)
+          when String
+            @filter_string += c
+            output_string(5, 0, "Filter: #{@filter_string}")
+            clear_pull_requests
+            filter_current_pull_requests(@filter_string)
+          end
+        else
+          case c
+          when 'j', Curses::Key::DOWN
+            move_selection_down
+            draw_current_pull_requests
+          when 'k', Curses::Key::UP
+            move_selection_up
+            draw_current_pull_requests
+          when 'r'
+            @force_update = true
+            Curses.setpos(5, 0)
+            Curses.clrtoeol
+          when 'o', ENTER_KEY
+            @state_lock.synchronize {
+              Launchy.open(@current_pull_requests[selected_pull_request_loc].link)
+            }
+          when 'n'
+            load_next_page
+          when 'p'
+            load_prev_page
+          when '/'
+            @filter_mode = true
+            @original_pull_requests = @current_pull_requests.dup
+            output_string(5, 0, "Filter: #{@filter_string}")
+          end
         end
         c = Curses.getch()
       end
@@ -123,7 +159,7 @@ module Pra
 
     def display_instructions
       output_string(0, 0, "Pra: Helping you own pull requests")
-      output_string(1, 0, "quit: q, up: k|#{"\u25B2".encode("UTF-8")}, down: j|#{"\u25BC".encode("UTF-8")}, open: o|#{"\u21A9".encode("UTF-8")}, refresh: r, next page: n, prev page: p")
+      output_string(1, 0, "quit: q, up: k|#{"\u25B2".encode("UTF-8")}, down: j|#{"\u25BC".encode("UTF-8")}, open: o|#{"\u21A9".encode("UTF-8")}, refresh: r, next page: n, prev page: p, filter: /")
     end
 
     def move_selection_up
@@ -210,6 +246,22 @@ module Pra
         Curses.clrtoeol
       end
       Curses.refresh
+    end
+
+    def filter_current_pull_requests(input_string)
+      pull_reqs = @original_pull_requests.dup.keep_if do |pr|
+        columns.any? do |col|
+          presenter = Pra::CursesPullRequestPresenter.new(pr)
+          pr_attr_value = presenter.send(col[:name])
+          if input_string == input_string.downcase
+            pr_attr_value.to_s.downcase.include?(input_string)
+          else
+            pr_attr_value.to_s.include?(input_string)
+          end
+        end
+      end
+
+      refresh_pull_requests(pull_reqs)
     end
 
     def draw_current_pull_requests
