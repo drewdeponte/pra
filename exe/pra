@@ -4,7 +4,25 @@ $LOAD_PATH.unshift ::File.expand_path(::File.dirname(__FILE__) + '/../lib')
 
 require 'rubygems'
 
+require 'optparse'
 require 'pra/app'
+require 'pra/authenticator'
 
-app = Pra::App.new
-app.run
+options = {}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: pra [options]"
+
+  opts.on("-a", "--authenticate", "Authenticate") do |a|
+    options[:authenticate] = a
+  end
+end.parse!
+
+case
+when options[:authenticate]
+  authenticator = Pra::Authenticator.new
+  authenticator.run
+else
+  app = Pra::App.new
+  app.run
+end
