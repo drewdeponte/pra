@@ -6,6 +6,8 @@ versions as well as provide a rough history.
 
 #### Next Release
 
+#### v2.1.0
+
 * Added filtering of current list of pull requests
 
 #### v2.0.0
