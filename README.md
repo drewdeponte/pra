@@ -23,7 +23,7 @@ purposes when pra starts.
 
 ## Configuration
 
-`pra` requires one configuration, `~/.pra.json`, to exist in your home
+`pra` requires one configuration, `~/.pra/config.json`, to exist in your home
 directory. The following is an example config that can be used as a starter.
 *Note:* You will need to replace **your.username**, **your.password**,
 **your.stash.server**, and the **repositories** and **organizations** sections
@@ -130,7 +130,7 @@ authentication enabled.
 Simply go to your GitHub **Account Settings**, select **Applications**, click
 the **Create new token** button in the **Personal Access Token** section. Give
 it the name "Pra" and submit. This will generate your personal access token.
-Then simply put your personal access token in the `~/.pra.json` as your GitHub
+Then simply put your personal access token in the `~/.pra/config.json` as your GitHub
 username and "x-oauth-basic" as your GitHub password.
 
 ## Usage
@@ -166,6 +166,13 @@ To force a refresh press the `r` key.
 
 To move between pages press `n` to go to the next page, and `p` to go to the
 previous page.
+
+### Filter
+
+To filter the list of you pull requests you can press `/` and start typing. The
+list will start filtering as you type. Once you have completed typing your
+filter you can press `Return` and go back to interacting with the list of pull
+requests. Refreshing by pressing `r` will clear out the filter.
 
 ### Quit
 
