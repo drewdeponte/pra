@@ -9,6 +9,7 @@ versions as well as provide a rough history.
 * Added filtering of current list of pull requests
 
 #### v2.0.0
+
 * Added ability to refresh pull requests
 * Added pagination when there are more pull requests than can be displayed
 * Added support for github organizations
